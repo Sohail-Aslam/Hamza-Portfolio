@@ -1,3 +1,329 @@
 .min-h-screen {
   background-position-x: -100px;
 }
+
+body {
+  font-family: 'Inter', sans-serif;
+  overflow-x: hidden; /* Prevent horizontal scroll */
+  background-color: #f0f4f8; /* Light background */
+  transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out; /* Smooth transition for mode change */
+}
+
+#bg-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1; /* Send canvas to the background */
+}
+
+.section-container {
+  position: relative; /* Ensure content is above the canvas */
+  z-index: 1;
+
+  /* Apply backdrop-filter for the Gaussian blur effect on content */
+  backdrop-filter: blur(8px); /* Adjust blur strength as needed */
+  -webkit-backdrop-filter: blur(8px); /* Safari support */
+  background-color: rgba(255, 255, 255, 0.6); /* Semi-transparent white background */
+  border-radius: 1.5rem; /* Large rounded corners for sections */
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05); /* Subtle shadow */
+  margin: 2rem auto; /* Center sections with margin */
+  max-width: 90%; /* Max width for responsiveness */
+  transition: background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out; /* Smooth transition for mode change */
+}
+
+/* Smooth scroll behavior */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom scrollbar for a cuter look */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f0f4f8;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #a7d9f2; /* Light blue */
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #87c3e2; /* Slightly darker blue on hover */
+}
+
+/* Side menu specific styles */
+.side-menu {
+  width: 80px; /* Fixed width for the menu */
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 2rem;
+  background-color: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 5px 0 15px rgba(0, 0, 0, 0.1);
+  z-index: 20;
+  border-top-right-radius: 1.5rem;
+  border-bottom-right-radius: 1.5rem;
+  transition: background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out; /* Smooth transition for mode change */
+}
+
+.side-menu-item {
+  width: 56px; /* Size for the circular items */
+  height: 56px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1.5rem; /* Space between items */
+  border-radius: 9999px; /* Full circle */
+  background-color: #e0f2f7; /* Light blue background for items */
+  color: #4a5568; /* Darker text/icon color */
+  font-size: 1.5rem; /* For icons/text */
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+.side-menu-item.active {
+  transform: scale(2.05) translateX(20px); /* Scale up */
+  border: 5px solid rgba(255, 255, 255, 0.8); /* Blue border */
+  background-color: #d1e7f0; /* Slightly darker background when active */
+}
+
+.side-menu-item:hover:not(.active) {
+  transform: scale(1.05);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Adjust main content to make space for the side menu */
+main {
+  margin-left: 100px; /* Width of side menu + some padding */
+}
+
+/* Light/Dark mode button specific positioning */
+.mode-toggle-container {
+  margin-top: auto; /* Pushes the toggle to the bottom */
+  margin-bottom: 2rem;
+}
+
+/* Styles for light/dark mode toggle button */
+.mode-toggle-btn {
+  position: relative;
+  overflow: hidden;
+
+  /* Initial glow effect (light mode) */
+  box-shadow: 0 0 10px rgba(255, 255, 0, 0.5), 0 0 20px rgba(255, 255, 0, 0.3);
+  transition: all 0.3s ease-in-out;
+  background-color: #ffeb3b; /* Yellow for sun */
+}
+
+.mode-toggle-btn.dark-mode {
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.5), 0 0 20px rgba(0, 255, 255, 0.3);
+  background-color: #2a3b4c; /* Dark blue for moon */
+  color: #e0f7fa; /* Light color for moon icon */
+}
+
+/* Bounce effect keyframes */
+@keyframes bounce {
+  0%,
+  20%,
+  50%,
+  80%,
+  100% {
+    transform: translateY(0);
+  }
+
+  40% {
+    transform: translateY(-10px);
+  }
+
+  60% {
+    transform: translateY(-5px);
+  }
+}
+
+.mode-toggle-btn.bouncing {
+  animation: bounce 0.6s ease-in-out;
+}
+
+
+/* Dark mode specific styles */
+body.dark-mode {
+  background-color: #1a202c; /* Dark background */
+  color: #e2e8f0; /* Light text */
+}
+
+body.dark-mode .section-container {
+  background-color: rgba(45, 55, 72, 0.6); /* Darker semi-transparent */
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+body.dark-mode .text-gray-800 {
+  color: #e2e8f0;
+}
+
+body.dark-mode .text-gray-700 {
+  color: #cbd5e0;
+}
+
+body.dark-mode .text-gray-600 {
+  color: #a0aec0;
+}
+
+body.dark-mode .bg-white {
+  background-color: #2d3748;
+}
+
+body.dark-mode .bg-opacity-80 {
+  background-color: rgba(45, 55, 72, 0.8);
+}
+
+body.dark-mode .shadow-lg {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.15);
+}
+
+body.dark-mode .border-gray-300 {
+  border-color: #4a5568;
+}
+
+body.dark-mode .focus\:ring-blue-400:focus {
+  --tw-ring-color: #63b3ed;
+}
+
+body.dark-mode .bg-gray-800 {
+  background-color: #1a202c;
+}
+
+body.dark-mode .text-blue-600 { /* Specific for the main heading */
+  color: #63b3ed;
+}
+
+body.dark-mode .text-blue-500 {
+  color: #63b3ed;
+}
+
+body.dark-mode .hover\:text-blue-500:hover {
+  color: #63b3ed;
+}
+
+body.dark-mode .bg-blue-500 {
+  background-color: #63b3ed;
+}
+
+body.dark-mode .hover\:bg-blue-600:hover {
+  background-color: #4299e1;
+}
+
+body.dark-mode .text-pink-500 {
+  color: #f687b3;
+}
+
+body.dark-mode .text-green-500 {
+  color: #68d391;
+}
+
+body.dark-mode .text-purple-500 {
+  color: #a78bfa;
+}
+
+body.dark-mode .text-orange-500 {
+  color: #f6ad55;
+}
+
+/* body.dark-mode .text-indigo-500 {
+  color: #818cf8;
+} */
+
+body.dark-mode .border-orange-200 {
+  border-color: #fbd38d;
+}
+
+body.dark-mode .border-green-200 {
+  border-color: #9ae6b4;
+}
+
+body.dark-mode .border-blue-200 {
+  border-color: #90cdf4;
+}
+
+body.dark-mode .border-pink-200 {
+  border-color: #fbb6ce;
+}
+
+body.dark-mode .bg-indigo-500 {
+  background-color: #818cf8;
+}
+
+body.dark-mode .hover\:bg-indigo-600:hover {
+  background-color: #667eea;
+}
+
+/* Dark mode for side menu */
+body.dark-mode .side-menu {
+  background-color: rgba(45, 55, 72, 0.8);
+  box-shadow: 5px 0 15px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-mode .side-menu-item {
+  background-color: #2d3748;
+  color: #cbd5e0;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+body.dark-mode .side-menu-item.active {
+  border: 3px solid #63b3ed;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4), 0 0 15px rgba(99, 179, 237, 0.7);
+  background-color: #4a5568;
+}
+
+body.dark-mode .side-menu-item:hover:not(.active) {
+  background-color: #4a5568;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
+}
+
+@keyframes ping-fast {
+  0% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(2) translateY(-60px);
+  }
+}
+
+.animate-ping-fast {
+  animation: ping-fast 10.6s ease-out forwards;
+}
+
+@keyframes bounce-sm {
+  0%,
+  100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.animate-bounce-sm {
+  animation: bounce-sm 10.4s ease;
+}
+
+@keyframes shake {
+  0% { transform: rotate(0deg); }
+  25% { transform: rotate(5deg); }
+  50% { transform: rotate(-5deg); }
+  75% { transform: rotate(4deg); }
+  100% { transform: rotate(0deg); }
+}
+
+.shake {
+  animation: shake 0.4s ease;
+}

@@ -1,5 +1,5 @@
-/* eslint-disable */
-import { useState } from 'react';
+import { useRef, useEffect, useState } from 'react';
+import { useBomb } from './BombContext'; // adjust path if needed
 
 const skills = [
   {
@@ -95,26 +95,114 @@ const skills = [
       'CSS is used to style HTML documents. CSS3 introduced features like flexbox, animations, and media queries for responsive design.'
   }
 ];
-
-
 export default function Skills() {
   const [selectedSkill, setSelectedSkill] = useState<any>(null);
 
+  const {
+    bombMode,
+    adjustablePower,
+    adjustableRadius,
+    adjustableRotation,
+    setBombPoint,
+    hitElementsTransforms,
+    setHitElementsTransforms,
+    elementRefs,
+  } = useBomb();
+
+  const skillRefs = useRef<(HTMLSpanElement | null)[]>([]);
+
+  // Helper to parse existing transform string
+  const parseTransform = (transformString: string) => {
+    let x = 0, y = 0, rot = 0;
+    const translateMatch = transformString.match(/translate\(([-\d.]+)px,\s*([-\d.]+)px\)/);
+    const rotateMatch = transformString.match(/rotate\(([-\d.]+)deg\)/);
+    if (translateMatch) {
+      x = parseFloat(translateMatch[1]);
+      y = parseFloat(translateMatch[2]);
+    }
+    if (rotateMatch) {
+      rot = parseFloat(rotateMatch[1]);
+    }
+    return { x, y, rot };
+  };
+
+  // Bomb click logic
+  const calculateHitElements = (e: React.MouseEvent) => {
+    if (!bombMode) return;
+    const clickX = e.clientX;
+    const clickY = e.clientY;
+    const newTransforms = new Map<string, string>();
+
+    Object.entries(elementRefs.current).forEach(([id, el]) => {
+      if (el) {
+        const rect = el.getBoundingClientRect();
+        const cx = rect.left + rect.width / 2;
+        const cy = rect.top + rect.height / 2;
+        const dx = cx - clickX;
+        const dy = cy - clickY;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+
+        if (distance <= adjustableRadius) {
+          const forceMultiplier = (adjustableRadius - distance) / adjustableRadius;
+          const normDx = distance === 0 ? 0 : dx / distance;
+          const normDy = distance === 0 ? 0 : dy / distance;
+          const pushTx = normDx * adjustablePower * forceMultiplier;
+          const pushTy = normDy * adjustablePower * forceMultiplier;
+          const randomRot = Math.random() * 2 - 1;
+          const pushRot = randomRot * adjustableRotation;
+
+          const currentTransform = hitElementsTransforms.get(id) || 'translate(0px, 0px) rotate(0deg)';
+          const { x: curX, y: curY, rot: curRot } = parseTransform(currentTransform);
+
+          const finalTx = curX + pushTx;
+          const finalTy = curY + pushTy;
+          const finalRot = curRot + pushRot;
+
+          newTransforms.set(id, `translate(${finalTx}px, ${finalTy}px) rotate(${finalRot}deg)`);
+        }
+      }
+    });
+
+    setBombPoint({ x: clickX, y: clickY });
+    setHitElementsTransforms(prev => new Map([...prev, ...newTransforms]));
+  };
+
   return (
-    <div className="w-full max-w-screen px-4">
+    <div id='skills'
+      className="w-full max-w-screen px-4 section-container p-10 my-12 min-h-screen flex flex-col justify-center items-center text-center overflow-hidden"
+      onClick={calculateHitElements}
+      style={{ userSelect: 'none' }}
+    >
       <div>
-        <h2 className="text-3xl font-bold text-cyan-500 mb-6 text-left">Skills</h2>
+        <h2 className="text-3xl font-bold text-cyan-500 mb-6 text-center">Skills</h2>
         <div className="flex flex-col items-center justify-center">
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-6 w-100 sm:w-100 max-w-md">
-            {skills.map((skill, index) => (
-              <div
-                key={index}
-                className="p-6 border-2 border-cyan-200 rounded-xl shadow-md cursor-pointer hover:scale-125 transition-transform"
-                onClick={() => setSelectedSkill(skill)}
-              >
-                <img src={skill.src} alt={skill.name} className="w-12 h-12 mx-auto" />
-              </div>
-            ))}
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-6 w-full max-w-md">
+            {skills.map((skill, index) => {
+              const id = `skill-${index}`;
+              return (
+                <span
+                  key={id}
+                  ref={(el) => {
+                    skillRefs.current[index] = el;
+                    if (el) elementRefs.current[id] = el;
+                  }}
+                  style={{
+                    transform: hitElementsTransforms.get(id) || 'none',
+                  }}
+                  className="inline-block transition-transform duration-700 ease-out"
+                >
+                  <div
+                    className="p-6 border-2 border-cyan-200 rounded-xl shadow-md cursor-pointer hover:scale-125 transition-transform bg-white"
+                    onClick={(e) => {
+                      e.stopPropagation(); // prevent bomb click
+                      setSelectedSkill(skill);
+                    }}
+                  >
+                    <img src={skill.src} alt={skill.name} className="w-12 h-12 mx-auto" />
+                  </div>
+                </span>
+              );
+            })}
           </div>
         </div>
       </div>
@@ -141,6 +229,5 @@ export default function Skills() {
         </div>
       )}
     </div>
-  
   );
 }

@@ -1,5 +1,55 @@
 /* eslint-disable */
-const achivement = () => {
+import { useEffect, useRef } from 'react';
+import { useBomb } from '../component/BombContext'; // adjust path as needed
+
+const Achievement = () => {
+    const {
+        bombMode,
+        bombPoint,
+        adjustablePower,
+        adjustableRadius,
+        adjustableRotation,
+        setBombPoint,
+        hitElementsTransforms,
+        setHitElementsTransforms,
+        elementRefs,
+    } = useBomb();
+
+    const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
+    // Apply transforms ONLY when bomb is active and a bomb point exists
+    useEffect(() => {
+        if (!bombPoint || !bombMode) return;
+
+        const transformsMap = new Map<string, string>();
+
+        cardRefs.current.forEach((card, index) => {
+            if (!card) return;
+
+            const rect = card.getBoundingClientRect();
+            const cardX = rect.left + rect.width / 2;
+            const cardY = rect.top + rect.height / 2;
+            const distance = Math.hypot(bombPoint.x - cardX, bombPoint.y - cardY);
+
+            if (distance < adjustableRadius) {
+                const angle = Math.atan2(cardY - bombPoint.y, cardX - bombPoint.x);
+                const powerFactor = (1 - distance / adjustableRadius) * adjustablePower;
+                const offsetX = Math.cos(angle) * powerFactor;
+                const offsetY = Math.sin(angle) * powerFactor;
+                const rotation = adjustableRotation;
+                const transform = `translate(${offsetX}px, ${offsetY}px) rotate(${rotation}deg)`;
+
+                transformsMap.set(`card-${index}`, transform);
+                card.style.transition = 'transform 5.4s ease-out';
+                card.style.transform = transform;
+                card.classList.add('animate-bounce-sm');
+                setTimeout(() => card.classList.remove('animate-bounce-sm'), 500);
+            }
+        });
+
+        setHitElementsTransforms(prev => new Map([...prev, ...transformsMap]));
+    }, [bombPoint]); // ❗ Note: do NOT depend on bombMode here
+  
+      
     const projects = [
         {
             name: 'Spa-Booking App',
@@ -77,25 +127,86 @@ const achivement = () => {
             ]
         },
     ];
+    const calculateHitElements = (e: React.MouseEvent) => {
+        if (!bombMode) return;
+        const clickX = e.clientX;
+        const clickY = e.clientY;
+        const newTransforms = new Map<string, string>();
 
+        Object.entries(elementRefs.current).forEach(([id, el]) => {
+            if (el) {
+                const rect = el.getBoundingClientRect();
+                const cx = rect.left + rect.width / 2;
+                const cy = rect.top + rect.height / 2;
+                const dx = cx - clickX;
+                const dy = cy - clickY;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+
+                if (distance <= adjustableRadius) {
+                    const forceMultiplier = (adjustableRadius - distance) / adjustableRadius;
+                    const normDx = distance === 0 ? 0 : dx / distance;
+                    const normDy = distance === 0 ? 0 : dy / distance;
+                    const pushTx = normDx * adjustablePower * forceMultiplier;
+                    const pushTy = normDy * adjustablePower * forceMultiplier;
+                    const randomRot = Math.random() * 2 - 1;
+                    const pushRot = randomRot * adjustableRotation;
+
+                    const currentTransform = hitElementsTransforms.get(id) || 'translate(0px, 0px) rotate(0deg)';
+                    const { x: curX, y: curY, rot: curRot } = parseTransform(currentTransform);
+
+                    const finalTx = curX + pushTx;
+                    const finalTy = curY + pushTy;
+                    const finalRot = curRot + pushRot;
+
+                    newTransforms.set(id, `translate(${finalTx}px, ${finalTy}px) rotate(${finalRot}deg)`);
+                }
+            }
+        });
+
+        setBombPoint({ x: clickX, y: clickY });
+        setHitElementsTransforms(prev => new Map([...prev, ...newTransforms]));
+    };
+    const parseTransform = (transformString: string) => {
+        let x = 0, y = 0, rot = 0;
+        const translateMatch = transformString.match(/translate\(([-\d.]+)px,\s*([-\d.]+)px\)/);
+        const rotateMatch = transformString.match(/rotate\(([-\d.]+)deg\)/);
+        if (translateMatch) {
+            x = parseFloat(translateMatch[1]);
+            y = parseFloat(translateMatch[2]);
+        }
+        if (rotateMatch) {
+            rot = parseFloat(rotateMatch[1]);
+        }
+        return { x, y, rot };
+    };
+            
     return (
-        <div className="">
-            <div>
+        <div id='achivement' className="section-container overflow-hidden p-10 my-12 min-h-screen flex flex-col justify-center items-center text-center" onClick={calculateHitElements} >
+            <div rel="noopener noreferrer"
+            >
                 <h2 className="text-3xl font-bold text-cyan-500 mb-6">Achievements</h2>
-                <div className="flex flex-col items-center justify-center gap-10 p-[12%]">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-10 p-[12%]">
                     {projects.map((project, index) => (
                         <div
                             key={index}
-                            className={`flex flex-col sm:flex-row ${index % 2 !== 0 ? 'sm:flex-row-reverse' : ''
-                                } w-full max-w-3xl bg-white rounded-2xl shadow-md overflow-hidden transition-transform transform hover:-translate-y-1 hover:shadow-xl`}
+                            ref={(el) => {
+                                if (el) elementRefs.current[`card-${index}-container`] = el;
+                            }}
+                            className="flex flex-col sm:flex-row w-full bg-white rounded-2xl shadow-md overflow-visible transition-transform transform hover:-translate-y-1 hover:shadow-xl"
+                            style={{ transform: hitElementsTransforms.get(`card-${index}-container`) || 'none' }}
                         >
-                            {/* Image Section with Hover Overlay */}
+                            {/* IMAGE */}
                             <div className="group relative sm:w-1/2 w-full">
                                 <img
+                                    ref={(el) => {
+                                        if (el) elementRefs.current[`card-${index}-image`] = el;
+                                    }}
                                     src={project.image}
                                     alt={project.name}
-                                    className="h-48 sm:h-full w-full object-cover"
+                                    className="h-48 sm:h-full w-full object-cover transition-transform rounded-l-2xl"
+                                    style={{ transform: hitElementsTransforms.get(`card-${index}-image`) || 'none' }}
                                 />
+                                {/* Hover Overlay */}
                                 <div className="absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center gap-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                                     <a
                                         href={project.live}
@@ -116,21 +227,40 @@ const achivement = () => {
                                 </div>
                             </div>
 
-                            {/* Text + Tools Section */}
+                            {/* TEXT + TOOLS */}
                             <div className="sm:w-1/2 p-4 flex flex-col justify-center gap-2">
-                                <h3 className="font-semibold text-lg">{project.name}</h3>
+                                {/* Project Name */}
+                                <h3
+                                    ref={(el) => {
+                                        if (el) elementRefs.current[`card-${index}-title`] = el;
+                                    }}
+                                    className="font-semibold text-lg transition-transform"
+                                    style={{ transform: hitElementsTransforms.get(`card-${index}-title`) || 'none' }}
+                                >
+                                    {project.name}
+                                </h3>
+
+                                {/* Tools */}
                                 <div className="tools flex flex-wrap gap-2 mt-2">
-                                    {project.tools.map((tool, i) => (
-                                        <span
-                                            key={i}
-                                            className="bg-gray-200 text-cyan-800 text-sm font-medium px-2 py-1 rounded-md"
-                                        >
-                                            {tool}
-                                        </span>
-                                    ))}
+                                    {project.tools.map((tool, i) => {
+                                        const id = `card-${index}-tool-${i}`;
+                                        return (
+                                            <span
+                                                key={id}
+                                                ref={(el) => {
+                                                    if (el) elementRefs.current[id] = el;
+                                                }}
+                                                className="bg-gray-200 text-cyan-800 text-xs font-medium px-2 py-1 rounded-md transition-transform"
+                                                style={{ transform: hitElementsTransforms.get(id) || 'none' }}
+                                            >
+                                                {tool}
+                                            </span>
+                                        );
+                                    })}
                                 </div>
                             </div>
                         </div>
+
                     ))}
                 </div>
             </div>
@@ -140,4 +270,4 @@ const achivement = () => {
     )
 }
 
-export default achivement
+export default Achievement
