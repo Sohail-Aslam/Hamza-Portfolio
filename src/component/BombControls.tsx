@@ -20,6 +20,7 @@ const BombControls = () => {
         setAdjustableRotation,
         reset,
     } = useBomb();
+    
 
     return (
         <>
@@ -42,7 +43,7 @@ const BombControls = () => {
             </style>
             {/* Main control container, positioned fixed on the screen.
                 Removed 'sm:flex-row' to ensure the menu always appears below the buttons. */}
-            <div className="fixed top-4 right-6 z-50 flex flex-col items-start gap-2 p- rounded-lg shadow-lg border-2 p- rounded-sm border-black-600">
+            <div className="fixed top-4 right-6 z-250 flex flex-col items-start gap-2 p- rounded-lg shadow-lg border-2 p- rounded-sm border-black-600">
                 {/* Container for the main action buttons */}
                 <div className="flex gap-20">
                     {/* Button to activate bomb mode */}

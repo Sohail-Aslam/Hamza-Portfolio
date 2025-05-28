@@ -1,5 +1,7 @@
 import React from 'react';
 import { useBomb } from '../component/BombContext'; 
+import ShapeLayer from '../ShapeLayer';
+import { div } from 'framer-motion/client';
 const About = () => {
   const {
     bombMode,
@@ -81,12 +83,15 @@ const About = () => {
   const getElementId = (prefix: string, index: number) => `${prefix}-${index}`;
 
   return (
+    <div>
+
     <div
       id="about"
       className="text-left overflow-hidden flex flex-col items-center justify-center px-6 section-container min-h-screen select-none"
       onClick={calculateHitElements}
       style={{ userSelect: 'none' }}
     >
+
       <h1 className="text-3xl font-bold text-cyan-500 mb-6 w-full text-left">
         About
       </h1>
@@ -145,6 +150,7 @@ const About = () => {
           );
         })}
       </div>
+    </div>
     </div>
   );
 };

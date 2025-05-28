@@ -31,9 +31,9 @@ export const BombProvider = ({ children }: { children: React.ReactNode }) => {
     const elementRefs = useRef<Record<string, HTMLElement | null>>({});
 
     // You need to define these in the provider if they are part of the context value
-    const [adjustableRadius, setAdjustableRadius] = useState(150);
-    const [adjustablePower, setAdjustablePower] = useState(450);
-    const [adjustableRotation, setAdjustableRotation] = useState(0);
+    const [adjustableRadius, setAdjustableRadius] = useState(210);
+    const [adjustablePower, setAdjustablePower] = useState(80);
+    const [adjustableRotation, setAdjustableRotation] = useState(8);
 
     // Define the functions if they are to be part of the context
     // This is a placeholder for your actual calculateHitElements and reset functions.

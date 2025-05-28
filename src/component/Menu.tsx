@@ -9,7 +9,7 @@ import BombControls from './BombControls';
 import Skills from '../component/skills';
 import { Howl } from 'howler';
 import { useBomb } from '../component/BombContext'; 
-
+import ShapeLayer from '../ShapeLayer';
 // --- Physics Classes (same as before) ---
 class Vector {
     x: number;
@@ -240,8 +240,10 @@ class Rope {
 }
 const App: React.FC = () => {
     const {
-          bombMode,
-        } = useBomb();
+        bombMode,
+        setBombMode, // ✅ add this
+    } = useBomb();
+      
     const dynamicZIndex = bombMode ? 'z-[70]' : 'z-0'; // or z-10/z-20 as default
 
     const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -274,7 +276,12 @@ const App: React.FC = () => {
             element.scrollIntoView({ behavior: 'smooth' });
         }
     };
-
+    useEffect(() => {
+        if (bombMode && ropeRef.current && !ropeRef.current.wrapped) {
+            ropeRef.current.toggleWrap();
+            setIsWrapped(true);
+        }
+    }, [bombMode]);
     useEffect(() => {
         const canvas = canvasRef.current;
         if (!canvas) return;
@@ -418,26 +425,35 @@ const App: React.FC = () => {
             cancelAnimationFrame(animationRef.current);
         };
     }, [isDragging, dragOffset, isWrapped, activeTab]);
-
     const toggleWrap = useCallback(() => {
         if (ropeRef.current) {
             ropeRef.current.toggleWrap();
-            setIsWrapped(ropeRef.current.wrapped);
-            if (!ropeRef.current.wrapped) {
+            const nowWrapped = ropeRef.current.wrapped;
+            setIsWrapped(nowWrapped);
+
+            if (!nowWrapped) {
                 setIsDragging(false);
                 setDraggedPoint(null);
+                setBombMode(false); // ✅ turn off bomb mode
+            }
+
+            // Elevate canvas z-index if unwrapped
+            if (!nowWrapped && canvasRef.current) {
+                canvasRef.current.style.zIndex = '10';
             }
         }
-    }, []);
+    }, [setBombMode]);
+      
+    const canvasZIndex = bombMode || isWrapped ? 'z-0' : 'z-[110]';
 
     return (
         <div className="relative w-full h-66 font-sans">
             {/* Menu Button */}
-            <div className="bg-white p-4 sm:p-6 w-full rounded-b-3xl fixed top-0 left-0 z-50 flex items-center justify-start shadow-md">
+            <div className="bg-white p-4 sm:p-6 w-full rounded-b-3xl fixed top-0 left-0 z-150 flex items-center justify-start shadow-md">
                 <div
                     ref={menuRef}
                     onClick={toggleWrap}
-                    className="border-2 p-2 rounded-lg border-gray-400 text-gray-700 cursor-pointer hover:bg-gray-200 transition-all duration-200 ease-in-out flex items-center justify-center shadow-sm active:shadow-inner z-100"
+                    className="border-2 p-2 rounded-lg border-gray-400 text-gray-700 cursor-pointer hover:bg-gray-200 transition-all duration-200 ease-in-out flex items-center justify-center shadow-sm active:shadow-inner z-(1220)"
                     title={isWrapped ? "Unwrap Rope" : "Wrap Rope"}
                 >
                     <IoMdMenu />
@@ -445,16 +461,20 @@ const App: React.FC = () => {
             </div>
 
             {/* Canvas - now with pointer-events-auto to allow clicks */}
+            {/* {!bombMode && ( */}
             <canvas
                 ref={canvasRef}
-                className="fixed top-0 left-0 z-40 pointer-events-auto"
+                className={`fixed bottom-0 left-0 pointer-events-auto ${canvasZIndex}`}
             />
 
+             
+
             {/* Content Sections */}
-            <div className={`relative pt-24 ${bombMode ? 'z-[70]' : 'z-0'}`}>
+            <div className={`relative pt-24 ${bombMode ? 'z-10' : 'z-5'}`}>
                 <BombControls />
 
-                <section id="header" className={`min-h-s ${dynamicZIndex}`}>
+                <section id="header" className={`min-h-screen  ${dynamicZIndex}`}>
+        {/* <ShapeLayer /> */}
                     <Header />
                 </section>
 
@@ -476,6 +496,7 @@ const App: React.FC = () => {
 
                 <section id="contact" className={`min-h-screen  ${dynamicZIndex}`}>
                     <Contact />
+                    
                 </section>
             </div>
         </div>

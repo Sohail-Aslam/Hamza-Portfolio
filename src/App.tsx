@@ -9,30 +9,15 @@ import Contact from './component/contact'
 import { BombProvider } from './component/BombContext';
 import BombControls from './component/BombControls';
 import Menu from './component/Menu'
+import ShapeLayer from './ShapeLayer'
 function App() {
 
   return (
     <div>
       <BombProvider>
         <Menu />
+        <ShapeLayer />
         <BombControls />
-        {/* <div className="relative">
-          <section id="header">
-            <Header />
-          </section>
-          <section id="about">
-            <About />
-          </section>
-          <section id="achivement">
-            <Achivement />
-          </section>
-          <section id="certificates">
-            <Certificate />
-          </section>
-          <section id="contact">
-            <Contact />
-          </section>
-        </div> */}
       </BombProvider>
     </div>
   )

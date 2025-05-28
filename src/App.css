@@ -99,6 +99,12 @@ html {
   background-color: #d1e7f0; /* Slightly darker background when active */
 }
 
+body.dark-mode .side-menu-item {
+  background-color: #2d3748;
+  color: #cbd5e0;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
 .side-menu-item:hover:not(.active) {
   transform: scale(1.05);
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
@@ -273,12 +279,6 @@ body.dark-mode .side-menu {
   box-shadow: 5px 0 15px rgba(0, 0, 0, 0.3);
 }
 
-body.dark-mode .side-menu-item {
-  background-color: #2d3748;
-  color: #cbd5e0;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-}
-
 body.dark-mode .side-menu-item.active {
   border: 3px solid #63b3ed;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4), 0 0 15px rgba(99, 179, 237, 0.7);
@@ -326,4 +326,21 @@ body.dark-mode .side-menu-item:hover:not(.active) {
 
 .shake {
   animation: shake 0.4s ease;
+}
+
+.decoration {
+  opacity: 0;
+  animation: fadeInUp 0.6s ease forwards;
+}
+
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: scale(0.2) translateY(10px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(0.4) translateY(0);
+  }
 }

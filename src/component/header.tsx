@@ -68,17 +68,6 @@ const Header = () => {
       setHitElementsTransforms,
       elementRefs,
     } = useBomb();
-  const dynamicZIndex = bombMode ? 'z-[70]' : 'z-30'; // or z-10/z-20 as default
-
-  // const [bombMode, setBombMode] = useState(false);
-  // const [bombPoint, setBombPoint] = useState<{ x: number; y: number } | null>(null);
-  // const [hitElementsTransforms, setHitElementsTransforms] = useState<Map<string, string>>(new Map());
-  // const elementRefs = useRef<Record<string, HTMLElement | null>>({});
-
-  // const [adjustableRadius, setAdjustableRadius] = useState(150);
-  // const [adjustablePower, setAdjustablePower] = useState(450);
-  // const [adjustableRotation, setAdjustableRotation] = useState(0);
-
   const getElementId = (prefix: string, index: number) => `${prefix}-${index}`;
 
   const isElementInViewport = useCallback((el: HTMLElement) => {
@@ -150,11 +139,10 @@ const Header = () => {
 
   return (
     <div id="home"
-      className="min-h-screen bg-black text-white p-12 relative select-none font-inter overflow-hidden section-container p-10 my-12 min-h-screen flex flex-col justify-center items-center text-center"
+      className=" text-white  select-none font-inter overflow-hidden px-10 min-h-screen flex flex-col justify-center items-center text-center z-5"
       onClick={calculateHitElements}
     >
       {/* Controls Bar */}
-    
 
       <div className="flex flex-col-reverse md:flex-row w-full">
         {/* Left content */}
@@ -163,11 +151,32 @@ const Header = () => {
             <h1
               className="mt-6 text-xl sm:text-2xl md:text-3xl lg:text-5xl font-bold leading-tight text-5xl font-extrabold text-blue-600 mb-6 leading-tight"
               style={{ color: '#32cacd' }}
-            >
+              >
               {"Hello, World!  I am Umair Hamza.".split(' ').map((word, index) => {
                 const id = getElementId('heading', index);
                 return (
                   <span
+                  key={id}
+                  ref={(el) => {
+                    elementRefs.current[id] = el;
+                  }}
+                  className="inline-block transition-transform duration-700 ease-out"
+                  style={{
+                    transform: hitElementsTransforms.get(id) || 'none',
+                  }}
+                  >
+                    {word}&nbsp;
+                  </span>
+                );
+              })}
+            </h1>
+
+            <h3 className="text-lg sm:text-xl text-xl text-black max-w-3xl">
+              {"I'm an optimist 🤓 who enjoys spreading positivity 🤪 wherever I go.".split(' ').map(
+                (word, index) => {
+                  const id = getElementId('subheading', index);
+                  return (
+                    <span
                     key={id}
                     ref={(el) => {
                       elementRefs.current[id] = el;
@@ -176,27 +185,6 @@ const Header = () => {
                     style={{
                       transform: hitElementsTransforms.get(id) || 'none',
                     }}
-                  >
-                    {word}&nbsp;
-                  </span>
-                );
-              })}
-            </h1>
-
-            <h3 className="text-lg sm:text-xl text-xl text-gray-700 max-w-3xl">
-              {"I'm an optimist 🤓 who enjoys spreading positivity 🤪 wherever I go.".split(' ').map(
-                (word, index) => {
-                  const id = getElementId('subheading', index);
-                  return (
-                    <span
-                      key={id}
-                      ref={(el) => {
-                        elementRefs.current[id] = el;
-                      }}
-                      className="inline-block transition-transform duration-700 ease-out"
-                      style={{
-                        transform: hitElementsTransforms.get(id) || 'none',
-                      }}
                     >
                       {word}&nbsp;
                     </span>
