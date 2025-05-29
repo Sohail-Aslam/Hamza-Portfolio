@@ -3,8 +3,8 @@ import { FaGithub, FaTwitter, FaCodepen } from "react-icons/fa";
 import { FaLinkedin } from "react-icons/fa6";
 import { IoMdMail } from "react-icons/io";
 import { GoMoveToEnd } from "react-icons/go";
-import { useBomb } from '../component/BombContext'; 
-import { Howl } from 'howler';
+import { useBomb } from '../component/BombContext';
+
 const socialIcons = [
   {
     id: 'icon-github',
@@ -32,11 +32,7 @@ const socialIcons = [
     link: 'https://codepen.io/umairhamza',
   },
 ];
-const boomSound = new Howl({
-  src: ['/sounds/boom.mp3'],
-  volume: 0.8,         // from 0.0 to 1.0
-  rate: 1.0,           // playback speed
-});
+
 // Inline SVG for GoMoveToEnd icon
 const GoMoveToEndSVG = (props: React.SVGProps<SVGSVGElement>) => <GoMoveToEnd {...props} />;
 
@@ -58,16 +54,23 @@ const parseTransform = (transformString: string) => {
 };
 
 const Header = () => {
-    const {
-      bombMode,
-      adjustablePower,
-      adjustableRadius,
-      adjustableRotation,
-      setBombPoint,
-      hitElementsTransforms,
-      setHitElementsTransforms,
-      elementRefs,
-    } = useBomb();
+  const {
+    bombMode,
+    adjustablePower,
+    adjustableRadius,
+    adjustableRotation,
+    setBombPoint,
+    hitElementsTransforms,
+    setHitElementsTransforms,
+    elementRefs,
+  } = useBomb();
+
+  // Provide default values for variables that might be undefined from useBomb()
+  const currentBombMode: boolean = bombMode ?? false;
+  const currentAdjustablePower: number = adjustablePower ?? 450; // Sensible default
+  const currentAdjustableRadius: number = adjustableRadius ?? 150; // Sensible default
+  const currentAdjustableRotation: number = adjustableRotation ?? 0; // Sensible default
+
   const getElementId = (prefix: string, index: number) => `${prefix}-${index}`;
 
   const isElementInViewport = useCallback((el: HTMLElement) => {
@@ -82,64 +85,60 @@ const Header = () => {
   }, []);
 
   const calculateHitElements = (e: React.MouseEvent) => {
-    if (!bombMode) return;
-    boomSound.play();
+    // Use the potentially defaulted/asserted value
+    if (!currentBombMode) return;
+
     const clickX = e.clientX;
     const clickY = e.clientY;
     const newTransforms = new Map<string, string>();
 
-    Object.entries(elementRefs.current).forEach(([id, el]) => {
-      if (el && isElementInViewport(el)) {
-        boomSound.play();
-        const elementRect = el.getBoundingClientRect();
-        const currentElementCenterX = elementRect.left + elementRect.width / 2;
-        const currentElementCenterY = elementRect.top + elementRect.height / 2;
+    // Ensure elementRefs.current is not null before proceeding
+    if (elementRefs.current) {
+      Object.entries(elementRefs.current).forEach(([id, el]) => {
+        if (el && isElementInViewport(el)) {
+          const elementRect = el.getBoundingClientRect();
+          const currentElementCenterX = elementRect.left + elementRect.width / 2;
+          const currentElementCenterY = elementRect.top + elementRect.height / 2;
 
-        const dx = currentElementCenterX - clickX;
-        const dy = currentElementCenterY - clickY;
+          const dx = currentElementCenterX - clickX;
+          const dy = currentElementCenterY - clickY;
 
-        const distance = Math.sqrt(dx * dx + dy * dy);
+          const distance = Math.sqrt(dx * dx + dy * dy);
 
-        if (distance <= adjustableRadius) {
-          const forceMultiplier = (adjustableRadius - distance) / adjustableRadius;
+          // Use the potentially defaulted/asserted values in calculations
+          if (distance <= currentAdjustableRadius) {
+            const forceMultiplier = (currentAdjustableRadius - distance) / currentAdjustableRadius;
 
-          const normalizedDx = distance === 0 ? 0 : dx / distance;
-          const normalizedDy = distance === 0 ? 0 : dy / distance;
+            const normalizedDx = distance === 0 ? 0 : dx / distance;
+            const normalizedDy = distance === 0 ? 0 : dy / distance;
 
-          const pushTx = normalizedDx * adjustablePower * forceMultiplier;
-          const pushTy = normalizedDy * adjustablePower * forceMultiplier;
+            const pushTx = normalizedDx * currentAdjustablePower * forceMultiplier;
+            const pushTy = normalizedDy * currentAdjustablePower * forceMultiplier;
 
-          const randomRot = Math.random() * 2 - 1;
-          const pushRot = randomRot * adjustableRotation;
+            const randomRot = Math.random() * 2 - 1;
+            const pushRot = randomRot * currentAdjustableRotation;
 
-          const currentTransformString = hitElementsTransforms.get(id) || 'translate(0px, 0px) rotate(0deg)';
-          const { x: currentTotalTx, y: currentTotalTy, rot: currentTotalRot } = parseTransform(currentTransformString);
+            const currentTransformString = hitElementsTransforms.get(id) || 'translate(0px, 0px) rotate(0deg)';
+            const { x: currentTotalTx, y: currentTotalTy, rot: currentTotalRot } = parseTransform(currentTransformString);
 
-          const finalTx = currentTotalTx + pushTx;
-          const finalTy = currentTotalTy + pushTy;
-          const finalRot = currentTotalRot + pushRot;
+            const finalTx = currentTotalTx + pushTx;
+            const finalTy = currentTotalTy + pushTy;
+            const finalRot = currentTotalRot + pushRot;
 
-          const finalTransformString = `translate(${finalTx}px, ${finalTy}px) rotate(${finalRot}deg)`;
-          newTransforms.set(id, finalTransformString);
-          boomSound.play();
+            const finalTransformString = `translate(${finalTx}px, ${finalTy}px) rotate(${finalRot}deg)`;
+            newTransforms.set(id, finalTransformString);
+          }
         }
-      }
-    });
-    boomSound.play();
+      });
+    }
+
     setBombPoint({ x: clickX, y: clickY });
     setHitElementsTransforms(prev => new Map([...prev, ...newTransforms]));
   };
-  
-
-  // const reset = () => {
-  //   setBombPoint(null);
-  //   setBombMode(false);
-  //   setHitElementsTransforms(new Map());
-  // };
 
   return (
     <div id="home"
-      className=" text-white  select-none font-inter overflow-hidden px-10 min-h-screen flex flex-col justify-center items-center text-center z-5"
+      className=" text-white select-none font-inter overflow-hidden px-10 min-h-screen flex flex-col justify-center items-center text-center z-5"
       onClick={calculateHitElements}
     >
       {/* Controls Bar */}
@@ -151,19 +150,21 @@ const Header = () => {
             <h1
               className="mt-6 text-xl sm:text-2xl md:text-3xl lg:text-5xl font-bold leading-tight text-5xl font-extrabold text-blue-600 mb-6 leading-tight"
               style={{ color: '#32cacd' }}
-              >
-              {"Hello, World!  I am Umair Hamza.".split(' ').map((word, index) => {
+            >
+              {"Hello, World! I am Umair Hamza.".split(' ').map((word, index) => {
                 const id = getElementId('heading', index);
                 return (
                   <span
-                  key={id}
-                  ref={(el) => {
-                    elementRefs.current[id] = el;
-                  }}
-                  className="inline-block transition-transform duration-700 ease-out"
-                  style={{
-                    transform: hitElementsTransforms.get(id) || 'none',
-                  }}
+                    key={id}
+                    ref={(el) => {
+                      if (elementRefs.current) { // Added null check
+                        elementRefs.current[id] = el;
+                      }
+                    }}
+                    className="inline-block transition-transform duration-700 ease-out"
+                    style={{
+                      transform: hitElementsTransforms.get(id) || 'none',
+                    }}
                   >
                     {word}&nbsp;
                   </span>
@@ -177,14 +178,16 @@ const Header = () => {
                   const id = getElementId('subheading', index);
                   return (
                     <span
-                    key={id}
-                    ref={(el) => {
-                      elementRefs.current[id] = el;
-                    }}
-                    className="inline-block transition-transform duration-700 ease-out"
-                    style={{
-                      transform: hitElementsTransforms.get(id) || 'none',
-                    }}
+                      key={id}
+                      ref={(el) => {
+                        if (elementRefs.current) { // Added null check
+                          elementRefs.current[id] = el;
+                        }
+                      }}
+                      className="inline-block transition-transform duration-700 ease-out"
+                      style={{
+                        transform: hitElementsTransforms.get(id) || 'none',
+                      }}
                     >
                       {word}&nbsp;
                     </span>
@@ -196,7 +199,7 @@ const Header = () => {
 
           <a
             href="#"
-            className="relative inline-flex items-center justify-center px-4 py-2 w-fit overflow-hidden font-medium tracking-tight text-black bg-white border-2 border-[#32cacd] rounded-full group  mt-8 px-5 py-2 bg-blue-500 text-lg font-semibold rounded-full shadow-lg transform hover:scale-105 transition duration-300 ease-in-out"
+            className="relative inline-flex items-center justify-center px-4 py-2 w-fit overflow-hidden font-medium tracking-tight text-black bg-white border-2 border-[#32cacd] rounded-full group mt-8 px-5 py-2 bg-blue-500 text-lg font-semibold rounded-full shadow-lg transform hover:scale-105 transition duration-300 ease-in-out"
           >
             <span className="absolute w-0 h-0 transition-all duration-500 ease-out bg-cyan-500 rounded-full group-hover:w-40 group-hover:h-40"></span>
             <span className="absolute inset-0 w-full h-full -mt-1 rounded-full opacity-20 bg-gradient-to-b from-transparent via-transparent to-gray-700"></span>
@@ -205,7 +208,9 @@ const Header = () => {
               <span
                 key={getElementId('contact-icon', 0)}
                 ref={(el) => {
-                  elementRefs.current[getElementId('contact-icon', 0)] = el;
+                  if (elementRefs.current) { // Added null check
+                    elementRefs.current[getElementId('contact-icon', 0)] = el;
+                  }
                 }}
                 className="inline-block transition-transform duration-700 ease-out"
                 style={{
@@ -227,9 +232,11 @@ const Header = () => {
                   href={icon.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-block transition-transform duration-700 ease-out  text-black hover:text-[#32cacd] transform hover:-translate-y-1 hover:shadow-xl cursor-pointer"
+                  className="inline-block transition-transform duration-700 ease-out text-black hover:text-[#32cacd] transform hover:-translate-y-1 hover:shadow-xl cursor-pointer"
                   ref={(el) => {
-                    elementRefs.current[id] = el;
+                    if (elementRefs.current) { // Added null check
+                      elementRefs.current[id] = el;
+                    }
                   }}
                   style={{
                     transform: hitElementsTransforms.get(id) || 'none',
@@ -251,26 +258,6 @@ const Header = () => {
           />
         </div>
       </div>
-
-
-      {/* Optional Debug: bomb radius visualization */}
-      {/* {bombPoint && (
-        <div
-          className="absolute border-2 border-red-500 rounded-full pointer-events-none opacity-75"
-          style={{
-            left: bombPoint.x - adjustableRadius,
-            top: bombPoint.y - adjustableRadius,
-            width: adjustableRadius * 2,
-            height: adjustableRadius * 2,
-            position: 'fixed',
-            transform: 'scale(0)',
-            animation: 'expandBomb 0.5s forwards',
-          }}
-        />
-      )} */}
-
-      {/* CSS for bomb animation */}
-
     </div>
   );
 };

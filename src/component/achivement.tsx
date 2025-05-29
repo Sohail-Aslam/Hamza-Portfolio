@@ -6,9 +6,9 @@ const Achievement = () => {
     const {
         bombMode,
         bombPoint,
-        adjustablePower,
-        adjustableRadius,
-        adjustableRotation,
+        adjustablePower = 80,    // Default to 0 if undefined
+        adjustableRadius = 100,   // Default to 0 if undefined
+        adjustableRotation = 8, // Default to 0 if undefined
         setBombPoint,
         hitElementsTransforms,
         setHitElementsTransforms,

@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useBomb } from './BombContext'; // adjust path if needed
 
 const skills = [
@@ -95,6 +95,7 @@ const skills = [
       'CSS is used to style HTML documents. CSS3 introduced features like flexbox, animations, and media queries for responsive design.'
   }
 ];
+
 export default function Skills() {
   const [selectedSkill, setSelectedSkill] = useState<any>(null);
 
@@ -109,9 +110,14 @@ export default function Skills() {
     elementRefs,
   } = useBomb();
 
-  const skillRefs = useRef<(HTMLSpanElement | null)[]>([]);
+  const currentBombMode: boolean = bombMode ?? false;
+  const currentAdjustablePower: number = adjustablePower ?? 450; // Sensible default
+  const currentAdjustableRadius: number = adjustableRadius ?? 150; // Sensible default
+  const currentAdjustableRotation: number = adjustableRotation ?? 0; // Sensible default
 
-  // Helper to parse existing transform string
+  const safeSetBombPoint = setBombPoint ?? (() => { });
+  const safeSetHitElementsTransforms = setHitElementsTransforms ?? (() => { });
+
   const parseTransform = (transformString: string) => {
     let x = 0, y = 0, rot = 0;
     const translateMatch = transformString.match(/translate\(([-\d.]+)px,\s*([-\d.]+)px\)/);
@@ -128,44 +134,55 @@ export default function Skills() {
 
   // Bomb click logic
   const calculateHitElements = (e: React.MouseEvent) => {
-    if (!bombMode) return;
+    if (!currentBombMode) return; // Use currentBombMode
+
     const clickX = e.clientX;
     const clickY = e.clientY;
     const newTransforms = new Map<string, string>();
 
-    Object.entries(elementRefs.current).forEach(([id, el]) => {
-      if (el) {
-        const rect = el.getBoundingClientRect();
-        const cx = rect.left + rect.width / 2;
-        const cy = rect.top + rect.height / 2;
-        const dx = cx - clickX;
-        const dy = cy - clickY;
-        const distance = Math.sqrt(dx * dx + dy * dy);
+    // Ensure elementRefs.current is not null before iterating
+    if (elementRefs?.current) {
+      Object.entries(elementRefs.current).forEach(([id, el]) => {
+        if (el instanceof HTMLElement) { // Ensure `el` is an HTMLElement to use getBoundingClientRect
+          const rect = el.getBoundingClientRect();
+          const cx = rect.left + rect.width / 2;
+          const cy = rect.top + rect.height / 2;
+          const dx = cx - clickX;
+          const dy = cy - clickY;
+          const distance = Math.sqrt(dx * dx + dy * dy);
 
-        if (distance <= adjustableRadius) {
-          const forceMultiplier = (adjustableRadius - distance) / adjustableRadius;
-          const normDx = distance === 0 ? 0 : dx / distance;
-          const normDy = distance === 0 ? 0 : dy / distance;
-          const pushTx = normDx * adjustablePower * forceMultiplier;
-          const pushTy = normDy * adjustablePower * forceMultiplier;
-          const randomRot = Math.random() * 2 - 1;
-          const pushRot = randomRot * adjustableRotation;
+          if (distance <= currentAdjustableRadius) { // Use currentAdjustableRadius
+            const forceMultiplier = (currentAdjustableRadius - distance) / currentAdjustableRadius;
+            const normDx = distance === 0 ? 0 : dx / distance;
+            const normDy = distance === 0 ? 0 : dy / distance;
+            const pushTx = normDx * currentAdjustablePower * forceMultiplier; // Use currentAdjustablePower
+            const pushTy = normDy * currentAdjustablePower * forceMultiplier; // Use currentAdjustablePower
+            const randomRot = Math.random() * 2 - 1;
+            const pushRot = randomRot * currentAdjustableRotation; // Use currentAdjustableRotation
 
-          const currentTransform = hitElementsTransforms.get(id) || 'translate(0px, 0px) rotate(0deg)';
-          const { x: curX, y: curY, rot: curRot } = parseTransform(currentTransform);
+            // Use optional chaining for hitElementsTransforms.get()
+            const currentTransform = hitElementsTransforms?.get(id) || 'translate(0px, 0px) rotate(0deg)';
+            const { x: curX, y: curY, rot: curRot } = parseTransform(currentTransform);
 
-          const finalTx = curX + pushTx;
-          const finalTy = curY + pushTy;
-          const finalRot = curRot + pushRot;
+            const finalTx = curX + pushTx;
+            const finalTy = curY + pushTy;
+            const finalRot = curRot + pushRot;
 
-          newTransforms.set(id, `translate(${finalTx}px, ${finalTy}px) rotate(${finalRot}deg)`);
+            newTransforms.set(id, `translate(${finalTx}px, ${finalTy}px) rotate(${finalRot}deg)`);
+          }
         }
-      }
-    });
+      });
+    }
 
-    setBombPoint({ x: clickX, y: clickY });
-    setHitElementsTransforms(prev => new Map([...prev, ...newTransforms]));
+    safeSetBombPoint({ x: clickX, y: clickY }); // Use safe setter
+    safeSetHitElementsTransforms(prev => new Map([...prev, ...newTransforms])); // Use safe setter
   };
+
+  // Helper function to get style
+  const getStyle = (id: string) => ({
+    transform: hitElementsTransforms?.get(id) || 'none', // Use optional chaining
+    transition: 'transform 0.7s ease-out', // Adjusted duration for potential better visual
+  });
 
   return (
     <div id='skills'
@@ -183,18 +200,19 @@ export default function Skills() {
                 <span
                   key={id}
                   ref={(el) => {
-                    skillRefs.current[index] = el;
-                    if (el) elementRefs.current[id] = el;
+                    // It's generally better to register directly with elementRefs from context
+                    // skillRefs.current[index] = el; // This line is likely redundant if elementRefs is your primary map for bomb effects
+                    if (elementRefs?.current && el) { // Null check for elementRefs.current and el
+                      elementRefs.current[id] = el;
+                    }
                   }}
-                  style={{
-                    transform: hitElementsTransforms.get(id) || 'none',
-                  }}
+                  style={getStyle(id)}
                   className="inline-block transition-transform duration-700 ease-out"
                 >
                   <div
                     className="p-6 border-2 border-cyan-200 rounded-xl shadow-md cursor-pointer hover:scale-125 transition-transform bg-white"
                     onClick={(e) => {
-                      e.stopPropagation(); // prevent bomb click
+                      e.stopPropagation(); // prevent bomb click on the background section
                       setSelectedSkill(skill);
                     }}
                   >

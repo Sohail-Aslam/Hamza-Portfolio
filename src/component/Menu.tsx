@@ -7,9 +7,7 @@ import Certificate from '../component/certificates';
 import Contact from '../component/contact';
 import BombControls from './BombControls';
 import Skills from '../component/skills';
-import { Howl } from 'howler';
 import { useBomb } from '../component/BombContext'; 
-import ShapeLayer from '../ShapeLayer';
 // --- Physics Classes (same as before) ---
 class Vector {
     x: number;
@@ -253,9 +251,7 @@ const App: React.FC = () => {
 
     const [isWrapped, setIsWrapped] = useState(false);
     const [isDragging, setIsDragging] = useState(false);
-    const [draggedPoint, setDraggedPoint] = useState<Point | null>(null);
-    const [dragOffset, setDragOffset] = useState<Vector>(new Vector(0, 0));
-    const detectionRadius = 20;
+
     const [activeTab, setActiveTab] = useState('header');
 
     const hangerHitboxes = useRef<{ id: string; x: number; y: number; r: number }[]>([]);
@@ -424,7 +420,7 @@ const App: React.FC = () => {
             window.removeEventListener('resize', handleResize);
             cancelAnimationFrame(animationRef.current);
         };
-    }, [isDragging, dragOffset, isWrapped, activeTab]);
+    }, [isDragging, isWrapped, activeTab]);
     const toggleWrap = useCallback(() => {
         if (ropeRef.current) {
             ropeRef.current.toggleWrap();
@@ -433,7 +429,6 @@ const App: React.FC = () => {
 
             if (!nowWrapped) {
                 setIsDragging(false);
-                setDraggedPoint(null);
                 setBombMode(false); // ✅ turn off bomb mode
             }
 

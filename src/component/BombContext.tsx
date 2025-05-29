@@ -38,7 +38,8 @@ export const BombProvider = ({ children }: { children: React.ReactNode }) => {
     // Define the functions if they are to be part of the context
     // This is a placeholder for your actual calculateHitElements and reset functions.
     // You would typically define them within the BombProvider or import them.
-    const calculateHitElements = (e: React.MouseEvent) => {
+    const calculateHitElements = () => { // Removed 'e: React.MouseEvent'
+
         // Your calculation logic here
         console.log("Calculating hit elements (placeholder)");
     };

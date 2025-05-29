@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
-import { useBomb } from './BombContext'; // Uncomment this in your actual application
+import { useBomb } from './BombContext';
 import { FaChevronDown } from "react-icons/fa";
 import { TbBomb } from "react-icons/tb";
 import { TbBombFilled } from "react-icons/tb";
 import { RiResetLeftLine } from "react-icons/ri";
-import '../App.css'
+import '../App.css';
+
 const BombControls = () => {
-    // Initialize isMenuOpen as a boolean, not a string
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     const {
-        bombMode, // eslint-disable-line no-unused-vars
+        bombMode,
         setBombMode,
         adjustablePower,
         setAdjustablePower,
@@ -20,7 +20,21 @@ const BombControls = () => {
         setAdjustableRotation,
         reset,
     } = useBomb();
-    
+
+    // Provide default values for variables that might be undefined from useBomb()
+    const currentBombMode: boolean = bombMode ?? false;
+    const currentAdjustablePower: number = adjustablePower ?? 450;
+    const currentAdjustableRadius: number = adjustableRadius ?? 150;
+    const currentAdjustableRotation: number = adjustableRotation ?? 0;
+
+    // Provide no-op functions as defaults if the setters are undefined.
+    // This resolves the "Cannot invoke an object which is possibly 'undefined'" error.
+    const safeSetBombMode = setBombMode ?? (() => { });
+    const safeSetAdjustablePower = setAdjustablePower ?? (() => { });
+    const safeSetAdjustableRadius = setAdjustableRadius ?? (() => { });
+    const safeSetAdjustableRotation = setAdjustableRotation ?? (() => { });
+    const safeReset = reset ?? (() => { });
+
 
     return (
         <>
@@ -41,53 +55,44 @@ const BombControls = () => {
                 }
                 `}
             </style>
-            {/* Main control container, positioned fixed on the screen.
-                Removed 'sm:flex-row' to ensure the menu always appears below the buttons. */}
             <div className="fixed top-4 right-6 z-250 flex flex-col items-start gap-2 p- rounded-lg shadow-lg border-2 p- rounded-sm border-black-600">
-                {/* Container for the main action buttons */}
                 <div className="flex gap-20">
-                    {/* Button to activate bomb mode */}
                     <button
                         onClick={() => {
-                            setBombMode(!bombMode);
-                            // Trigger shake animation by forcing reflow
+                            safeSetBombMode(!currentBombMode); // Use the safe setter
                             const btn = document.getElementById("bomb-button");
                             if (btn) {
                                 btn.classList.remove("shake");
-                                void btn.offsetWidth; // force reflow
+                                // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                                void btn.offsetWidth;
                                 btn.classList.add("shake");
                             }
                         }}
                         id="bomb-button"
-                        className={`p-2 transition-all duration-300 transform rounded-full ${bombMode ? 'bg-black p-2 text-white' : 'hover:scale-105'
+                        className={`p-2 transition-all duration-300 transform rounded-full ${currentBombMode ? 'bg-black p-2 text-white' : 'hover:scale-105'
                             }`}
                         aria-label="Toggle Bomb Mode"
                     >
-                        {bombMode ? <TbBombFilled /> : <TbBomb />}
+                        {currentBombMode ? <TbBombFilled /> : <TbBomb />}
                     </button>
 
-
-                    {/* Button to reset settings */}
                     <button
-                        onClick={reset}
+                        onClick={safeReset} // Use the safe reset function
                         className="p-2 transition-all duration-300 transform hover:scale-105 focus:outline-none"
-                        aria-label="Reset Bomb Settings" // Added for accessibility
+                        aria-label="Reset Bomb Settings"
                     >
-                        <RiResetLeftLine /> 
+                        <RiResetLeftLine />
                     </button>
 
-                    {/* Button to toggle the control menu visibility */}
                     <button
                         onClick={() => setIsMenuOpen((prev) => !prev)}
                         className="p-2 transition-transform hover:scale-110 focus:outline-none"
-                        aria-label={isMenuOpen ? "Close Control Menu" : "Open Control Menu"} // Dynamic label for accessibility
+                        aria-label={isMenuOpen ? "Close Control Menu" : "Open Control Menu"}
                     >
-                        <FaChevronDown />                    </button>
+                        <FaChevronDown />
+                    </button>
                 </div>
 
-                {/* Conditional rendering for the control menu.
-                    This div is now a direct sibling to the button container,
-                    and due to the parent's flex-col, it will always appear below. */}
                 {isMenuOpen && (
                     <div className="mt-2 w-64 p-4 bg-gray-900 text-white rounded-xs shadow-xl transition-all space-y-4 animate-fade-in-down">
                         {/* Power adjustment slider */}
@@ -100,12 +105,12 @@ const BombControls = () => {
                                 type="range"
                                 min="50"
                                 max="1000"
-                                value={adjustablePower}
-                                onChange={(e) => setAdjustablePower(Number(e.target.value))}
+                                value={currentAdjustablePower}
+                                onChange={(e) => safeSetAdjustablePower(Number(e.target.value))} // Use the safe setter
                                 className="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer accent-cyan-500"
-                                aria-label={`Bomb Power: ${adjustablePower}px`} // Added for accessibility
+                                aria-label={`Bomb Power: ${currentAdjustablePower}px`}
                             />
-                            <span className="text-sm">{adjustablePower}px</span>
+                            <span className="text-sm">{currentAdjustablePower}px</span>
                         </div>
 
                         {/* Radius adjustment slider */}
@@ -118,12 +123,12 @@ const BombControls = () => {
                                 type="range"
                                 min="10"
                                 max="300"
-                                value={adjustableRadius}
-                                onChange={(e) => setAdjustableRadius(Number(e.target.value))}
+                                value={currentAdjustableRadius}
+                                onChange={(e) => safeSetAdjustableRadius(Number(e.target.value))} // Use the safe setter
                                 className="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer accent-cyan-500"
-                                aria-label={`Bomb Radius: ${adjustableRadius}px`} // Added for accessibility
+                                aria-label={`Bomb Radius: ${currentAdjustableRadius}px`}
                             />
-                            <span className="text-sm">{adjustableRadius}px</span>
+                            <span className="text-sm">{currentAdjustableRadius}px</span>
                         </div>
 
                         {/* Rotation adjustment slider */}
@@ -136,12 +141,12 @@ const BombControls = () => {
                                 type="range"
                                 min="0"
                                 max="360"
-                                value={adjustableRotation}
-                                onChange={(e) => setAdjustableRotation(Number(e.target.value))}
+                                value={currentAdjustableRotation}
+                                onChange={(e) => safeSetAdjustableRotation(Number(e.target.value))} // Use the safe setter
                                 className="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer accent-cyan-500"
-                                aria-label={`Bomb Rotation: ${adjustableRotation}°`} // Added for accessibility
+                                aria-label={`Bomb Rotation: ${currentAdjustableRotation}°`}
                             />
-                            <span className="text-sm">{adjustableRotation}°</span>
+                            <span className="text-sm">{currentAdjustableRotation}°</span>
                         </div>
                     </div>
                 )}

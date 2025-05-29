@@ -1,17 +1,17 @@
 /* eslint-disable */
+import React from 'react'; // React is imported, useEffect is used but not strictly necessary for this logic
 import { useBomb } from '../component/BombContext';
-import { useEffect } from 'react';
 
 const certifications = [
     {
         stack: 'Full Stack Developer',
         link: 'https://www.credential.net/2bd7f2c3-a2a6-407f-b69b-f58b4e7db419',
-        label: 'Certificate of completition Full Stack Development where I spent 2000+ hours in coding',
+        label: 'Certificate of completion Full Stack Development where I spent 2000+ hours in coding',
     },
     {
         stack: 'Ruby on Rails',
         link: 'https://www.credential.net/b91e20c8-2e61-4846-8617-a61d16aa8f23#gs.4prjr0',
-        label: 'Certificate of completition Ruby on Rails module',
+        label: 'Certificate of completion Ruby on Rails module',
     },
     {
         stack: 'React Redux',
@@ -47,46 +47,16 @@ const Certifications = () => {
         elementRefs,
     } = useBomb();
 
-    const calculateHitElements = (e: React.MouseEvent) => {
-        if (!bombMode) return;
-        const clickX = e.clientX;
-        const clickY = e.clientY;
-        const newTransforms = new Map<string, string>();
+    // --- Type Safety for destructured variables and functions from useBomb ---
+    const currentBombMode: boolean = bombMode ?? false;
+    const currentAdjustablePower: number = adjustablePower ?? 450;
+    const currentAdjustableRadius: number = adjustableRadius ?? 150;
+    const currentAdjustableRotation: number = adjustableRotation ?? 0;
 
-        Object.entries(elementRefs.current).forEach(([id, el]) => {
-            if (el) {
-                const rect = el.getBoundingClientRect();
-                const cx = rect.left + rect.width / 2;
-                const cy = rect.top + rect.height / 2;
-                const dx = cx - clickX;
-                const dy = cy - clickY;
-                const distance = Math.sqrt(dx * dx + dy * dy);
+    const safeSetBombPoint = setBombPoint ?? (() => { });
+    const safeSetHitElementsTransforms = setHitElementsTransforms ?? (() => { });
 
-                if (distance <= adjustableRadius) {
-                    const forceMultiplier = (adjustableRadius - distance) / adjustableRadius;
-                    const normDx = dx / distance || 0;
-                    const normDy = dy / distance || 0;
-                    const pushTx = normDx * adjustablePower * forceMultiplier;
-                    const pushTy = normDy * adjustablePower * forceMultiplier;
-                    const randomRot = Math.random() * 2 - 1;
-                    const pushRot = randomRot * adjustableRotation;
-
-                    const currentTransform = hitElementsTransforms.get(id) || 'translate(0px, 0px) rotate(0deg)';
-                    const { x, y, rot } = parseTransform(currentTransform);
-
-                    const finalTx = x + pushTx;
-                    const finalTy = y + pushTy;
-                    const finalRot = rot + pushRot;
-
-                    newTransforms.set(id, `translate(${finalTx}px, ${finalTy}px) rotate(${finalRot}deg)`);
-                }
-            }
-        });
-
-        setBombPoint({ x: clickX, y: clickY });
-        setHitElementsTransforms(prev => new Map([...prev, ...newTransforms]));
-    };
-
+    // --- Helper Function: parseTransform ---
     const parseTransform = (transformString: string) => {
         let x = 0, y = 0, rot = 0;
         const translateMatch = transformString.match(/translate\(([-\d.]+)px,\s*([-\d.]+)px\)/);
@@ -101,6 +71,61 @@ const Certifications = () => {
         return { x, y, rot };
     };
 
+    // --- Main Logic: calculateHitElements ---
+    const calculateHitElements = (e: React.MouseEvent) => {
+        if (!currentBombMode) return; // Use currentBombMode
+
+        const clickX = e.clientX;
+        const clickY = e.clientY;
+        const newTransforms = new Map<string, string>();
+
+        // Ensure elementRefs.current is not null before iterating
+        if (elementRefs?.current) {
+            // Iterate over all elements registered in elementRefs
+            Object.entries(elementRefs.current).forEach(([id, el]) => {
+                // Ensure the ref element exists and is an HTMLElement
+                if (el instanceof HTMLElement) {
+                    const rect = el.getBoundingClientRect();
+                    const cx = rect.left + rect.width / 2;
+                    const cy = rect.top + rect.height / 2;
+                    const dx = cx - clickX;
+                    const dy = cy - clickY;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance <= currentAdjustableRadius) { // Use currentAdjustableRadius
+                        const forceMultiplier = (currentAdjustableRadius - distance) / currentAdjustableRadius;
+                        const normDx = dx / distance || 0;
+                        const normDy = dy / distance || 0;
+                        const pushTx = normDx * currentAdjustablePower * forceMultiplier; // Use currentAdjustablePower
+                        const pushTy = normDy * currentAdjustablePower * forceMultiplier; // Use currentAdjustablePower
+                        const randomRot = Math.random() * 2 - 1;
+                        const pushRot = randomRot * currentAdjustableRotation; // Use currentAdjustableRotation
+
+                        // Use optional chaining for hitElementsTransforms.get()
+                        const currentTransform = hitElementsTransforms?.get(id) || 'translate(0px, 0px) rotate(0deg)';
+                        const { x, y, rot } = parseTransform(currentTransform);
+
+                        const finalTx = x + pushTx;
+                        const finalTy = y + pushTy;
+                        const finalRot = rot + pushRot;
+
+                        newTransforms.set(id, `translate(${finalTx}px, ${finalTy}px) rotate(${finalRot}deg)`);
+                    }
+                }
+            });
+        }
+
+        safeSetBombPoint({ x: clickX, y: clickY }); // Use safe setter
+        safeSetHitElementsTransforms(prev => new Map([...prev, ...newTransforms])); // Use safe setter
+    };
+
+    // --- Helper Function: getStyle ---
+    const getStyle = (id: string) => ({
+        // Use optional chaining for hitElementsTransforms.get() here as well
+        transform: hitElementsTransforms?.get(id) || 'none',
+        transition: 'transform 0.4s ease-out',
+    });
+
     return (
         <div id='certificates'
             className="px-4 py-8 max-w-7xl mx-auto my-12 min-h-screen flex flex-col justify-center items-center text-center overflow-hidden section-container p-10 my-12 min-h-screen flex flex-col justify-center items-center text-center"
@@ -113,91 +138,87 @@ const Certifications = () => {
                 <table className="min-w-2xl bg-white shadow-md rounded-lg overflow-visible relative">
                     <thead
                         className="bg-gray-100 text-left text-sm font-semibold text-gray-700 relative z-10"
-                        ref={(el) => {
-                            elementRefs.current["thead"] = el;
-                        }}
-                        style={{
-                            transform: hitElementsTransforms.get("thead") || "none",
-                            transition: "transform 0.4s ease-out",
-                        }}
+                    // Removed ref and style from thead to allow inner th content to move independently
+                    // ref={(el) => { if(elementRefs?.current) elementRefs.current["thead"] = el; }}
+                    // style={getStyle("thead")}
                     >
                         <tr>
                             {["Stack", "Link", "Organization"].map((title, idx) => (
                                 <th
                                     key={idx}
                                     className="p-4 relative z-10"
-                                    ref={(el) => {
-                                        elementRefs.current[`th-${idx}`] = el;
-                                    }}
-                                    style={{
-                                        transform: hitElementsTransforms.get(`th-${idx}`) || "none",
-                                        transition: "transform 0.4s ease-out",
-                                    }}
                                 >
-                                    {title}
+                                    {/* Wrap content in a span for individual bomb effect */}
+                                    <span
+                                        ref={(el) => {
+                                            // Null check for elementRefs.current before assignment
+                                            if (elementRefs?.current) {
+                                                elementRefs.current[`th-title-${idx}`] = el;
+                                            }
+                                        }}
+                                        style={getStyle(`th-title-${idx}`)} // Apply style to the span
+                                        className="inline-block" // Ensure span behaves like a block for transform
+                                    >
+                                        {title}
+                                    </span>
                                 </th>
                             ))}
                         </tr>
                     </thead>
                     <tbody className="text-sm text-gray-800 relative z-0">
                         {certifications.map((cert, index) => {
-                            const rowId = `row-${index}`;
                             return (
                                 <tr
                                     key={index}
                                     className="border-t relative z-0"
-                                    ref={(el) => {
-                                        elementRefs.current[rowId] = el;
-                                    }}
-                                    style={{
-                                        transform: hitElementsTransforms.get(rowId) || "none",
-                                        transition: "transform 0.4s ease-out",
-                                    }}
+                                // Removed ref and style from tr to allow inner td content to move independently
+                                // ref={(el) => { if(elementRefs?.current) elementRefs.current[`row-${index}`] = el; }}
+                                // style={getStyle(`row-${index}`)}
                                 >
-                                    <td
-                                        className="p-4"
-                                        ref={(el) => {
-                                            elementRefs.current[`cert-${index}-stack`] = el;
-                                        }}
-                                        style={{
-                                            transform:
-                                                hitElementsTransforms.get(`cert-${index}-stack`) || "none",
-                                            transition: "transform 0.4s ease-out",
-                                        }}
-                                    >
-                                        {cert.stack}
+                                    <td className="p-4">
+                                        {/* Wrap content in a span for individual bomb effect */}
+                                        <span
+                                            ref={(el) => {
+                                                if (elementRefs?.current) {
+                                                    elementRefs.current[`cert-${index}-stack`] = el;
+                                                }
+                                            }}
+                                            style={getStyle(`cert-${index}-stack`)}
+                                            className="inline-block"
+                                        >
+                                            {cert.stack}
+                                        </span>
                                     </td>
-                                    <td
-                                        className="p-4 text-cyan-600 underline"
-                                        ref={(el) => {
-                                            elementRefs.current[`cert-${index}-link`] = el;
-                                        }}
-                                        style={{
-                                            transform:
-                                                hitElementsTransforms.get(`cert-${index}-link`) || "none",
-                                            transition: "transform 0.4s ease-out",
-                                        }}
-                                    >
-                                        <a href={cert.link} target="_blank" rel="noopener noreferrer">
+                                    <td className="p-4 text-cyan-600 underline">
+                                        {/* Wrap content in a span for individual bomb effect */}
+                                        <a
+                                            href={cert.link}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            ref={(el) => {
+                                                if (elementRefs?.current) {
+                                                    elementRefs.current[`cert-${index}-link`] = el;
+                                                }
+                                            }}
+                                            style={getStyle(`cert-${index}-link`)}
+                                            className="inline-block"
+                                        >
                                             {cert.label}
                                         </a>
                                     </td>
-                                    <td
-                                        className="p-4"
-                                        ref={(el) => {
-                                            elementRefs.current[`cert-${index}-org`] = el;
-                                        }}
-                                        style={{
-                                            transform:
-                                                hitElementsTransforms.get(`cert-${index}-org`) || "none",
-                                            transition: "transform 0.4s ease-out",
-                                        }}
-                                    >
+                                    <td className="p-4">
+                                        {/* Wrap content in a span for individual bomb effect */}
                                         <a
                                             href="https://www.microverse.org/"
-                                            className="text-blue-500 underline"
+                                            className="text-blue-500 underline inline-block"
                                             target="_blank"
                                             rel="noopener noreferrer"
+                                            ref={(el) => {
+                                                if (elementRefs?.current) {
+                                                    elementRefs.current[`cert-${index}-org`] = el;
+                                                }
+                                            }}
+                                            style={getStyle(`cert-${index}-org`)}
                                         >
                                             Microverse
                                         </a>
@@ -209,7 +230,6 @@ const Certifications = () => {
                 </table>
             </div>
         </div>
-      
     );
 };
 
