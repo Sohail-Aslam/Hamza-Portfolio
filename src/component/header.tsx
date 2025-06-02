@@ -138,18 +138,17 @@ const Header = () => {
 
   return (
     <div id="home"
-      className=" text-white select-none font-inter overflow-hidden px-10 min-h-screen flex flex-col justify-center items-center text-center z-5"
+      className="select-none font-inter overflow-hidden min-h-screen flex flex-col justify-center items-center text-center z-50 "
       onClick={calculateHitElements}
     >
       {/* Controls Bar */}
 
-      <div className="flex flex-col-reverse md:flex-row w-full">
+      <div className="flex flex-col-reverse items-center w-full section-container w-full py-10 bottom-15">
         {/* Left content */}
         <div className="flex-1 flex flex-col gap-16 text-white">
           <div className="flex flex-col gap-8">
             <h1
-              className="mt-6 text-xl sm:text-2xl md:text-3xl lg:text-5xl font-bold leading-tight text-5xl font-extrabold text-blue-600 mb-6 leading-tight"
-              style={{ color: '#32cacd' }}
+              className="mt-6 text-xl sm:text-2xl md:text-3xl lg:text-5xl font-bold leading-tight text-5xl font-extrabold text-blue-600 mb-6 leading-tight text-[#0ea5e9]"
             >
               {"Hello, World! I am Umair Hamza.".split(' ').map((word, index) => {
                 const id = getElementId('heading', index);
@@ -172,7 +171,7 @@ const Header = () => {
               })}
             </h1>
 
-            <h3 className="text-lg sm:text-xl text-xl text-black max-w-3xl">
+            <h3 className="text-lg sm:text-2xl text-xl text-black max-w-3xl">
               {"I'm an optimist 🤓 who enjoys spreading positivity 🤪 wherever I go.".split(' ').map(
                 (word, index) => {
                   const id = getElementId('subheading', index);
@@ -203,7 +202,7 @@ const Header = () => {
           >
             <span className="absolute w-0 h-0 transition-all duration-500 ease-out bg-cyan-500 rounded-full group-hover:w-40 group-hover:h-40"></span>
             <span className="absolute inset-0 w-full h-full -mt-1 rounded-full opacity-20 bg-gradient-to-b from-transparent via-transparent to-gray-700"></span>
-            <span className="relative z-10 flex items-center gap-2 group-hover:text-white transition duration-300">
+            <span className="relative z-20 flex items-center gap-2 group-hover:text-white transition duration-300">
               Contact me
               <span
                 key={getElementId('contact-icon', 0)}
@@ -222,7 +221,7 @@ const Header = () => {
             </span>
           </a>
 
-          <div className="flex gap-8 md:text-2xl lg:text-3xl">
+          <div className="flex gap-8 md:text-2xl lg:text-3xl  z-30">
             {socialIcons.map((icon, index) => {
               const id = getElementId('social-icon', index);
               const IconComponent = icon.component;
@@ -252,7 +251,7 @@ const Header = () => {
         {/* Right image */}
         <div className="flex justify-center md:justify-end items-center md:items-start mt-8 md:mt-0">
           <img
-            src="src/assets/avatar.png"
+            src="src/assets/avatar2.png"
             alt="avatar"
             className="w-48 h-48 md:w-64 md:h-64 rounded-full object-cover shadow-lg"
           />

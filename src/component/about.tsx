@@ -1,6 +1,6 @@
 import React from 'react';
 import { useBomb } from '../component/BombContext';
-
+import AboutObjects from './AboutObjects';
 const About = () => {
   const {
     bombMode,
@@ -84,35 +84,34 @@ const About = () => {
     <div>
       <div
         id="about"
-        className="text-left overflow-hidden flex flex-col items-center justify-center px-6 section-container min-h-screen select-none"
+        className="text-center overflow-hidden flex align-center p-10 section-container min-h-screen select-none"
         onClick={calculateHitElements}
         style={{ userSelect: 'none' }}
       >
-        <h1 className="text-3xl font-bold text-cyan-500 mb-6 w-full text-left">
+        <h1 className="text-3xl font-bold text-cyan-500 mb-6 w-full">
           About
         </h1>
-
         <div className="mb-12 max-w-xl text-center">
-          <h2 className="text-lg font-semibold mb-4">
+          {/* <h2 className="text-lg font-semibold mb-4">
             {"Hey, I'm Umair.".split(' ').map((word, i) => {
               const id = getElementId('about-heading', i);
               return (
                 <span
-                  key={id}
-                  ref={(el) => {
-                    if (elementRefs.current) {
-                      elementRefs.current[id] = el;
-                    }
-                  }}
-                  className="inline-block transition-transform duration-700 ease-out"
-                  style={{ transform: hitElementsTransforms.get(id) || 'none' }}
+                key={id}
+                ref={(el) => {
+                  if (elementRefs.current) {
+                    elementRefs.current[id] = el;
+                  }
+                }}
+                className="inline-block transition-transform duration-700 ease-out"
+                style={{ transform: hitElementsTransforms.get(id) || 'none' }}
                 >
                   {word}&nbsp;
                 </span>
               );
             })}
-          </h2>
-          <p className="text-base">
+          </h2> */}
+          {/* <p className="text-base">
             {"In 2022, I embarked on a self-taught coding journey, and from the moment I wrote my first 'Hello world!', I knew I had found the perfect career path to leverage my skills. My passion for mathematics has been a driving force, honing my problem-solving abilities and leading me to excel in various math Olympics.".split(' ').map((word, i) => {
               const id = getElementId('about-paragraph', i);
               return (
@@ -125,15 +124,16 @@ const About = () => {
                   }}
                   className="inline-block transition-transform duration-700 ease-out"
                   style={{ transform: hitElementsTransforms.get(id) || 'none' }}
-                >
+                  >
                   {word}&nbsp;
                 </span>
               );
             })}
-          </p>
+          </p> */}
         </div>
 
-        <div className="text-2xl text-center font-bold leading-relaxed max-w-xl md:text-3xl text-center">
+            <AboutObjects/>
+        {/* <div className="text-2xl text-center font-bold leading-relaxed max-w-xl md:text-3xl text-center">
           {"My international experience has honed my multilingual proficiency in English, Urdu, and Punjabi. Strong in teamwork, remote collaboration, and quick learning, with a self-motivated approach to problem-solving.".split(' ').map((word, i) => {
             const id = getElementId('about-footer', i);
             return (
@@ -151,7 +151,7 @@ const About = () => {
               </span>
             );
           })}
-        </div>
+        </div> */}
       </div>
     </div>
   );
