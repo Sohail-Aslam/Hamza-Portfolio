@@ -1,14 +1,14 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
-import spriteImg from '../assets/aboutv3.webp';
-import spriteData from '../assets/aboutv3.json';
+import spriteImg from '../assets/skillsv2v1.webp';
+import spriteData from '../assets/skillsv2v1.json';
 import { useBomb } from '../component/BombContext';
 import { useRopeContext } from '../component/RopeState';
 import RopeCanvs from '../component/RopeCanvs';
 
 export default function AboutObjects() {
     const { elementRefs, hitElementsTransforms } = useBomb();
-    const { areAllShrunk } = useRopeContext();
     const containerRef = useRef<HTMLDivElement>(null);
+    const { areAllShrunk } = useRopeContext();
 
     interface Frame {
         x: number;
@@ -44,21 +44,23 @@ export default function AboutObjects() {
         return parseFloat(pixelString.replace('px', ''));
     };
 
+
     const shapes: CustomShape[] = [
-        { name: 'user.png', heading: "Dev philosophy", expandedLeft: '34%', expandedTop: '17%', rotation: 0, scale: 1, delay: 500, shrunkWidth: '530px', shrunkHeight: '200px', shrunkText: 'I embarked on a self-taught coding journey, and from the moment I wrote my first Hello world!, I knew I had found the perfect career path to leverage my skills. My passion for mathematics has been a driving force, honing my problem-solving abilities and leading me to excel in various math Olympics', shrunkBorderColor: 'blue-700', colSpan: 2 },
-        { name: 'atom.png', heading: "Current Focus", expandedLeft: '55%', expandedTop: '19%', rotation: 0, scale: 1, delay: 50, shrunkWidth: '260px', shrunkHeight: '250px', shrunkText: 'Fundamental data structures and operations.', shrunkBorderColor: 'purple-500' },
-        { name: 'location (1).png', heading: "Where I\'m based", expandedLeft: '42%', expandedTop: '28%', rotation: 0, scale: 1, delay: 400, shrunkWidth: '260px', shrunkHeight: '100px', shrunkText: 'Geographical data and mapping services.', shrunkBorderColor: 'red-500' },
-        { name: 'cap.png', heading: "Education highlights", expandedLeft: '35%', expandedTop: '48%', rotation: 0, scale: 1, delay: 200, shrunkWidth: '260px', shrunkHeight: '130px', shrunkText: 'Academic records and learning paths.', shrunkBorderColor: 'pink-400' },
-        { heading: "Tech I use/love", name: 'brain.png', expandedLeft: '70%', expandedTop: '20%', rotation: 0, scale: 1, delay: 100, shrunkWidth: '260px', shrunkHeight: '130px', shrunkText: 'Advanced AI and neural network processing.', shrunkBorderColor: 'white' },
-        { name: 'date.png', heading: "Dev milestones.", expandedLeft: '40%', expandedTop: '63%', rotation: 0, scale: 1, delay: 300, shrunkWidth: '260px', shrunkHeight: '220px', shrunkText: 'Event scheduling and timeline management.', shrunkBorderColor: 'red-500' },
-        { name: 'heart.png', heading: "What I do beyond coding", expandedLeft: '85%', expandedTop: '35%', rotation: 0, scale: 0.9, delay: 350, shrunkWidth: '260px', shrunkHeight: '200px', shrunkText: 'Emotional intelligence and user sentiment analysis.', shrunkBorderColor: 'rose-400' },
-        { name: 'wrench.png', heading: "Current Focus", expandedLeft: '59%', expandedTop: '45%', rotation: 0, scale: 1, delay: 550, shrunkWidth: '260px', shrunkHeight: '150px', shrunkText: 'System settings and maintenance tools.', shrunkBorderColor: 'cyan-400' },
-        { name: 'text.png', heading: "Contact", expandedLeft: '15%', expandedTop: '75%', rotation: 0, scale: 1, delay: 450, shrunkWidth: '260px', shrunkHeight: '152px', shrunkText: 'Content creation and textual analysis.', shrunkBorderColor: 'blue-200' },
-        { name: 'achiv..png', heading: "Achivement", expandedLeft: '55%', expandedTop: '67%', rotation: 0, scale: 1, delay: 0, shrunkWidth: '260px', shrunkHeight: '100px', shrunkText: 'User achievements and milestones.', shrunkBorderColor: 'yellow-300' },
-        { heading: "Expertise area", name: 'briefcase.png', expandedLeft: '79%', expandedTop: '79%', rotation: 0, scale: 1, delay: 150, shrunkWidth: '260px', shrunkHeight: '148px', shrunkText: 'Business assets and financial management.', shrunkBorderColor: 'amber-300' },
+        { name: 'html.png', heading: 'HTML5', expandedLeft: '34%', expandedTop: '17%', rotation: 0, scale: 1, delay: 500, shrunkWidth: '530px', shrunkHeight: '200px', shrunkText: 'HTML is the standard markup language for building web pages. It defines the structure of content on the web using elements and tags.', shrunkBorderColor: 'blue-700', colSpan: 2 },
+        { name: 'css.png', heading: 'CSS3', expandedLeft: '42%', expandedTop: '28%', rotation: 0, scale: 1, delay: 400, shrunkWidth: '260px', shrunkHeight: '100px', shrunkText: 'Stylesheet language for styling HTML documents, with features like flexbox, animations, and media queries.', shrunkBorderColor: 'red-500' },
+        { name: 'figma.png', heading: 'Figma', expandedLeft: '35%', expandedTop: '48%', rotation: 0, scale: 1, delay: 200, shrunkWidth: '260px', shrunkHeight: '130px', shrunkText: 'Collaborative interface design tool for designing, prototyping, and iterating on digital products.', shrunkBorderColor: 'pink-400' },
+        { heading: 'Git', name: 'git.png', expandedLeft: '70%', expandedTop: '20%', rotation: 0, scale: 1, delay: 100, shrunkWidth: '260px', shrunkHeight: '130px', shrunkText: 'Distributed version control system for tracking changes in source code with branching and collaboration.', shrunkBorderColor: 'white' },
+        { name: 'github.png', heading: 'GitHub', expandedLeft: '40%', expandedTop: '63%', rotation: 0, scale: 1, delay: 300, shrunkWidth: '260px', shrunkHeight: '220px', shrunkText: 'Code hosting platform for version control and collaboration using Git with pull requests and issues.', shrunkBorderColor: 'red-500' },
+        { name: 'JS.png', heading: 'JavaScript', expandedLeft: '85%', expandedTop: '35%', rotation: 0, scale: 0.9, delay: 350, shrunkWidth: '260px', shrunkHeight: '200px', shrunkText: 'Programming language for web development that enables interactive and dynamic website content.', shrunkBorderColor: 'rose-400' },
+        { name: 'nodejs.png', heading: 'Node.js', expandedLeft: '59%', expandedTop: '45%', rotation: 0, scale: 1, delay: 550, shrunkWidth: '260px', shrunkHeight: '150px', shrunkText: 'JavaScript runtime for building scalable server-side applications using non-blocking I/O.', shrunkBorderColor: 'cyan-400' },
+        { name: 'react.png', heading: 'React', expandedLeft: '15%', expandedTop: '75%', rotation: 0, scale: 1, delay: 450, shrunkWidth: '260px', shrunkHeight: '152px', shrunkText: 'JavaScript library for building user interfaces with component-based architecture and virtual DOM.', shrunkBorderColor: 'blue-200' },
+        { name: 'redux.png', heading: 'Redux', expandedLeft: '55%', expandedTop: '67%', rotation: 0, scale: 1, delay: 0, shrunkWidth: '260px', shrunkHeight: '100px', shrunkText: 'Predictable state container for JavaScript apps, commonly used with React for state management.', shrunkBorderColor: 'yellow-300' },
+        { heading: 'SEO', name: 'seo.png', expandedLeft: '79%', expandedTop: '79%', rotation: 0, scale: 1, delay: 150, shrunkWidth: '260px', shrunkHeight: '148px', shrunkText: 'Search Engine Optimization techniques to improve website visibility in search engine results.', shrunkBorderColor: 'amber-300' },
+        { name: 'tailwind-css.png', heading: 'Tailwind CSS', expandedLeft: '45%', expandedTop: '80%', rotation: 0, scale: 1, delay: 50, shrunkWidth: '240px', shrunkHeight: '140px', shrunkText: 'Utility-first CSS framework for rapidly building custom designs without leaving your HTML.', shrunkBorderColor: 'blue-400' },
+        { name: 'typescript.png', heading: 'TypeScript', expandedLeft: '70%', expandedTop: '80%', rotation: 0, scale: 1, delay: 150, shrunkWidth: '250px', shrunkHeight: '150px', shrunkText: 'Typed superset of JavaScript that compiles to plain JavaScript, adding static types for better tooling.', shrunkBorderColor: 'blue-700' },
+        { name: 'vs.png', heading: 'VS Code', expandedLeft: '20%', expandedTop: '90%', rotation: 0, scale: 1, delay: 250, shrunkWidth: '230px', shrunkHeight: '130px', shrunkText: 'Lightweight but powerful source code editor with extensions, debugging, and Git integration.', shrunkBorderColor: 'blue-400' },
+        { name: 'wordress.png', heading: 'WordPress', expandedLeft: '85%', expandedTop: '50%', rotation: 0, scale: 1, delay: 350, shrunkWidth: '230px', shrunkHeight: '130px', shrunkText: 'Content management system for creating websites with extensive plugin ecosystem and ease of use.', shrunkBorderColor: 'blue-600' }
     ];
-
-
 
     const getGridParameters = useCallback((width: number) => {
         let cols = 4;
@@ -96,35 +98,35 @@ export default function AboutObjects() {
 
         return { cols, columnGap, rowGap, paddingTop, paddingLeft, baseItemWidth };
     }, []);
+
     const calculateShrunkPositions = useCallback((containerWidth: number) => {
         if (containerWidth === 0) {
             return { positions: new Map(), maxContainerHeight: 0, paddingTop: 0 };
         }
-        
+
         const positions = new Map<string, { left: number, top: number }>();
-        
+
         const { cols, columnGap, rowGap, paddingTop, paddingLeft, baseItemWidth } = getGridParameters(containerWidth);
-        
+
         const columnHeights: number[] = Array(cols).fill(paddingTop);
         const columnXPositions: number[] = [];
         for (let i = 0; i < cols; i++) {
             columnXPositions.push(paddingLeft + (i * (baseItemWidth + columnGap)));
         }
-        
+
         const indexedShapes = shapes.map((shape, originalIndex) => ({ shape, originalIndex }));
         indexedShapes.sort((a, b) => a.originalIndex - b.originalIndex);
-        
+
         indexedShapes.forEach(({ shape, originalIndex }) => {
-            const id = `about-shape-${originalIndex}`;
+            const id = `skills-shape-${originalIndex}`;
             const colSpan = shape.colSpan || 1;
-            
+
             let bestColumnIndex = -1;
             let minHeight = Infinity;
-            
+
             for (let i = 0; i <= cols - colSpan; i++) {
                 let maxBlockHeightInCurrentSpot = 0;
                 for (let j = 0; j < colSpan; j++) {
-                   
                     maxBlockHeightInCurrentSpot = Math.max(maxBlockHeightInCurrentSpot, columnHeights[i + j]);
                 }
 
@@ -195,27 +197,16 @@ export default function AboutObjects() {
         }
     }, [currentContainerWidth, calculateShrunkPositions]);
 
-    const { triggerExplosion, firePoints } = useBomb();
 
-    const handleClick = (e: React.MouseEvent) => {
-        triggerExplosion(e.clientX, e.clientY);
-    };
-    
     return (
-        <div className="absolute inset-0 pointer-events-auto overflow-hidden m-10">
-            {/* <button
-                onClick={handleToggleAllShrink}
-                className="absolute top-4 left-4 z-10 px-4 py-2 bg-blue-500 text-white rounded cursor-pointer pointer-events-auto rounded-md"
-            >
-                {areAllShrunk ? 'Expand All Objects' : 'Shrink All Objects'}
-            </button> */}
+        <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden m-10">
             <RopeCanvs />
 
 
             <div
                 ref={containerRef}
                 
-                className="relative mx-auto w-full max-w-[1200px] h-full "
+                className="relative mx-auto w-full max-w-[1200px] h-full pointer-events-auto"
                 style={{
                     height: areAllShrunk ? `${shrunkLayoutData.maxContainerHeight}px` : '100%',
                     transition: 'height 0.7s ease-in-out',
@@ -223,7 +214,7 @@ export default function AboutObjects() {
                 }}
             >
                 {shapes.map((shape, index) => {
-                    const id = `about-shape-${index}`;
+                    const id = `skills-shape-${index}`;
                     const transformFromBomb = hitElementsTransforms.get(id);
                     const frame = getFrameByName(shape.name);
 
@@ -356,19 +347,6 @@ export default function AboutObjects() {
                     );
                 })}
             </div>
-            {firePoints.map((point) => (
-                <img
-                    key={point.id}
-                    src={`/assets/fire.gif?id=${point.id}`} // force reload
-                    className="absolute pointer-events-none w-32 h-32"
-                    style={{
-                        top: point.y - 64,
-                        left: point.x - 64,
-                        zIndex: 9999,
-                    }}
-                />
-            ))}
-
         </div>
     );
 }

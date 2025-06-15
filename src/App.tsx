@@ -1,17 +1,24 @@
 /* eslint-disable */
 import './App.css'
 import { BombProvider } from './component/BombContext';
-import BombControls from './component/BombControls';
 import Menu from './component/Menu'
 import ShapeLayer from './ShapeLayer'
+import { ThemeProvider } from './component/ThemeContext';
+import { RopeProvider, useRopeContext } from './component/RopeState';
+
 function App() {
 
   return (
     <div>
       <BombProvider>
-        <Menu />
+        <RopeProvider>
+
+        <ThemeProvider>
+        <Menu />        
         <ShapeLayer />
-        <BombControls />
+        </ThemeProvider>
+          </RopeProvider>
+
       </BombProvider>
     </div>
   )

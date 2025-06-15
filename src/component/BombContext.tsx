@@ -18,18 +18,45 @@ interface BombContextType {
     setAdjustableRadius?: React.Dispatch<React.SetStateAction<number>>;
     adjustableRotation?: number;
     setAdjustableRotation?: React.Dispatch<React.SetStateAction<number>>;
+    firePoints: { x: number; y: number; id: string } [];
+    setFirePoints: React.Dispatch<React.SetStateAction<{ x: number; y: number; id: string }[]>>;
+    triggerExplosion: (x: number, y: number) => void;
 }
 
 // Provide a default value that matches the context type.
 // All properties should be present, even if some are null/undefined initially.
 const BombContext = createContext<BombContextType | null>(null);
 
+
 export const BombProvider = ({ children }: { children: React.ReactNode }) => {
     const [bombMode, setBombMode] = useState<boolean>(false);
     const [bombPoint, setBombPoint] = useState<{ x: number; y: number } | null>(null);
     const [hitElementsTransforms, setHitElementsTransforms] = useState<Map<string, string>>(new Map());
     const elementRefs = useRef<Record<string, HTMLElement | null>>({});
+    const [firePoints, setFirePoints] = useState<{ x: number; y: number; id: string }[]>([]);
 
+    const bombSoundRef = useRef(new Audio("/assets/bomb.mp3")); // Or howler.js if you prefer
+    const triggerExplosion = (x: number, y: number) => {
+        if (!bombMode) return;
+
+        // Play sound
+        try {
+            bombSoundRef.current.currentTime = 0;
+            bombSoundRef.current.play().catch((err) => {
+                console.warn("Audio blocked until user interacts:", err);
+            });
+        } catch (err) {
+            console.error("Failed to play bomb sound:", err);
+        }
+
+        // Show fire animation
+        const fireId = Date.now().toString();
+        setFirePoints(prev => [...prev, { x, y, id: fireId }]);
+        setTimeout(() => {
+            setFirePoints(prev => prev.filter(f => f.id !== fireId));
+        }, 1000); // match your GIF duration
+    };
+    
     // You need to define these in the provider if they are part of the context value
     const [adjustableRadius, setAdjustableRadius] = useState(210);
     const [adjustablePower, setAdjustablePower] = useState(80);
@@ -51,23 +78,19 @@ export const BombProvider = ({ children }: { children: React.ReactNode }) => {
 
     return (
         <BombContext.Provider value={{
-            bombMode,
-            setBombMode,
-            bombPoint,
-            setBombPoint,
-            hitElementsTransforms,
-            setHitElementsTransforms,
+            bombMode, setBombMode,
+            bombPoint, setBombPoint,
+            hitElementsTransforms, setHitElementsTransforms,
             elementRefs,
-            // Expose the functions and state from Header if you want them globally accessible
             calculateHitElements,
             reset,
-            adjustablePower,
-            setAdjustablePower,
-            adjustableRadius,
-            setAdjustableRadius,
-            adjustableRotation,
-            setAdjustableRotation,
+            adjustablePower, setAdjustablePower,
+            adjustableRadius, setAdjustableRadius,
+            adjustableRotation, setAdjustableRotation,
+            firePoints, setFirePoints,
+            triggerExplosion,
         }}>
+
             {children}
         </BombContext.Provider>
     );

@@ -1,0 +1,130 @@
+:root {
+  --peach: #ffad69;
+  --white: #fff;
+  --black: #000;
+  --grey: #d3d3d3;
+  --facebook: #3b5999;
+  --twitter: #55acee;
+  --instagram: #e4405f;
+  --apple: #131418;
+}
+
+footer {
+  position: relative;
+}
+
+.social-list {
+  position: absolute;
+  top: 70%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  margin: 0;
+  padding: 0;
+}
+
+.social-list li {
+  list-style: none;
+  margin: 0 40px;
+}
+
+.social-list li a {
+  position: relative;
+  display: block;
+  width: 30px;
+  height: 30px;
+  background: #808080;
+  text-align: center;
+  transform: perspective(1000px) rotate(-30deg) skew(25deg) translate(0, 0);
+  transition: 0.5s;
+  box-shadow: -30px 30px 10px rgba(0, 0, 0, 0.5);
+}
+
+.social-list li a .fab {
+  font-size: 28px;
+  color: black;
+  line-height: 80px;
+  transition: 0.5s;
+  padding: 2px 0 0 2px;
+}
+
+.social-list li a::before {
+  content: "";
+  position: absolute;
+  top: 4px;
+  left: -9px;
+  height: 100%;
+  width: 10px;
+  background: #93a092;
+  transition: 0.5s;
+  transform: rotate(0deg) skewY(-45deg);
+}
+
+.social-list li a::after {
+  content: "";
+  position: absolute;
+  bottom: -9px;
+  left: -5px;
+  height: 10px;
+  width: 100%;
+  background: var(--grey);
+  transition: 0.5s;
+  transform: rotate(0deg) skewX(-45deg);
+}
+
+.social-list li a:hover {
+  transform: perspective(1000px) rotate(-30deg) skew(25deg) translate(20px, -20px);
+  box-shadow: -50px 50px 50px rgba(0, 0, 0, 0.5);
+}
+
+.social-list li:hover .fab {
+  color: white;
+}
+
+.social-list li:hover .facebook {
+  background: var(--facebook);
+}
+
+.social-list li:hover .facebook::before {
+  background: #5e77ab;
+}
+
+.social-list li:hover .facebook::after {
+  background: #4c68a2;
+}
+
+.social-list li:hover .instagram {
+  background: var(--instagram);
+}
+
+.social-list li:hover .instagram::before {
+  background: #e4506b;
+}
+
+.social-list li:hover .instagram::after {
+  background: #e7617a;
+}
+
+.social-list li:hover .twitter {
+  background: var(--twitter);
+}
+
+.social-list li:hover .twitter::before {
+  background: #64b2ee;
+}
+
+.social-list li:hover .twitter::after {
+  background: #73baf0;
+}
+
+.social-list li:hover .apple {
+  background: var(--apple);
+}
+
+.social-list li:hover .apple::before {
+  background: #171717;
+}
+
+.social-list li:hover .apple::after {
+  background: #2e2e2e;
+}

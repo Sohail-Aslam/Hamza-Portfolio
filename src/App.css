@@ -2,13 +2,6 @@
   background-position-x: -100px;
 }
 
-body {
-  font-family: 'Inter', sans-serif;
-  overflow-x: hidden; /* Prevent horizontal scroll */
-  background-color: #f0f4f8; /* Light background */
-  transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out; /* Smooth transition for mode change */
-}
-
 #bg-canvas {
   position: fixed;
   top: 0;
@@ -18,21 +11,7 @@ body {
   z-index: -1; /* Send canvas to the background */
 }
 
-.section-container {
-  position: relative; /* Ensure content is above the canvas */
-  z-index: 1;
-
-  /* Apply backdrop-filter for the Gaussian blur effect on content */
-  backdrop-filter: blur(8px); /* Adjust blur strength as needed */
-  -webkit-backdrop-filter: blur(8px); /* Safari support */
-  background-color: rgba(255, 255, 255, 0.6); /* Semi-transparent white background */
-  border-radius: 1.5rem; /* Large rounded corners for sections */
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05); /* Subtle shadow */
-  margin: 2rem auto; /* Center sections with margin */
-  max-width: 90%; /* Max width for responsiveness */
-  transition: background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out; /* Smooth transition for mode change */
-}
-
+/*
 /* Smooth scroll behavior */
 html {
   scroll-behavior: smooth;
@@ -161,18 +140,6 @@ main {
   animation: bounce 0.6s ease-in-out;
 }
 
-
-/* Dark mode specific styles */
-body.dark-mode {
-  background-color: #1a202c; /* Dark background */
-  color: #e2e8f0; /* Light text */
-}
-
-body.dark-mode .section-container {
-  background-color: rgba(45, 55, 72, 0.6); /* Darker semi-transparent */
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-}
-
 body.dark-mode .text-gray-800 {
   color: #e2e8f0;
 }
@@ -209,10 +176,6 @@ body.dark-mode .bg-gray-800 {
   background-color: #1a202c;
 }
 
-body.dark-mode .text-blue-600 { /* Specific for the main heading */
-  color: #63b3ed;
-}
-
 body.dark-mode .text-blue-500 {
   color: #63b3ed;
 }
@@ -223,10 +186,6 @@ body.dark-mode .hover\:text-blue-500:hover {
 
 body.dark-mode .bg-blue-500 {
   background-color: #63b3ed;
-}
-
-body.dark-mode .hover\:bg-blue-600:hover {
-  background-color: #4299e1;
 }
 
 body.dark-mode .text-pink-500 {
@@ -343,4 +302,64 @@ body.dark-mode .side-menu-item:hover:not(.active) {
     opacity: 1;
     transform: scale(0.4) translateY(0);
   }
+}
+
+
+/* styles.css or your main CSS file */
+
+.section-container {
+  position: relative;
+  z-index: 1;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(5px);
+  background-color: rgba(255, 255, 255, 0.6); /* Semi-transparent white background */
+  border-radius: 1.5rem;
+  box-shadow: 0 10px 20px rgba(27, 27, 27, 0.05);
+  margin: 2rem auto;
+  max-width: 70%;
+  transition: background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out, border-color 0.3s ease-in-out; /* Added border-color for transition */
+  border: 1px solid rgba(255, 255, 255, 0.2); /* Light mode border */
+}
+
+body.dark-mode .section-container {
+  background-color: rgba(44, 44, 44, 0.6); /* Semi-transparent dark background */
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3); /* Stronger shadow for dark mode */
+  border: 1px solid rgba(0, 0, 0, 0.4); /* Dark mode border */
+}
+
+
+/* --- Global Body Theme Colors (Optional but Recommended) --- */
+
+/* You might want to define global text and background colors for your entire app */
+body {
+  background-color: #f0f2f5; /* Light mode background */
+  color: #333; /* Light mode text */
+  transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+}
+
+/* --- Adjust text colors within your component for dark mode --- */
+
+/* Apply this to your h1, h3, a (link), and social icon text */
+
+body.dark-mode .text-black { /* This will target elements with `text-black` in dark mode */
+  color: #e0e0e0; /* Or a specific dark mode text color */
+}
+
+body.dark-mode .text-blue-600 { /* Adjust for the "Hello World" heading */
+  color: #90caf9; /* A lighter blue for dark mode */
+}
+
+body.dark-mode { /* Adjust for the `text-[#0ea5e9]` class */
+  color: #90caf9;
+  background-color: #000;
+}
+
+
+/* Adjust the contact button */
+body.dark-mode .group-hover\:text-white {
+  color: #e0e0e0; /* Ensure text is visible in dark mode */
+}
+
+body.dark-mode .hover\:text-\[\#32cacd\]:hover {
+  color: #78d2d6; /* A slightly different hover color for dark mode social icons */
 }

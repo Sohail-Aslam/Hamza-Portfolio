@@ -1,6 +1,9 @@
 import React from 'react';
 import { useBomb } from '../component/BombContext';
-
+import './socialicons.css'
+import { FaGithub, FaTwitter, FaCodepen } from "react-icons/fa";
+import { FaLinkedin } from "react-icons/fa6";
+import { IoMdMail } from "react-icons/io";
 const Contact = () => {
     const {
         bombMode,
@@ -105,111 +108,178 @@ const Contact = () => {
     });
 
     return (
-        <section
-            id="contact"
-            className="section-container p-10 my-12 min-h-screen flex flex-col justify-center items-center text-center overflow-hidden"
-            onClick={calculateHitElements}
-        >
-            <h2 className="text-4xl font-bold mb-8" style={{ color: '#32cacd' }}>
-                {"Get in Touch".split(" ").map((word, i) => (
-                    <span
-                        key={`heading-word-${i}`}
-                        ref={(el) => {
-                            // Null check for elementRefs.current before assignment
-                            if (elementRefs?.current) {
-                                elementRefs.current[`heading-word-${i}`] = el;
-                            }
-                        }}
-                        style={getStyle(`heading-word-${i}`)}
-                        className="inline-block mr-2"
-                    >
-                        {word}
-                    </span>
-                ))}
-            </h2>
-
-            <p className="text-lg text-gray-700 mb-8 max-w-2xl flex flex-wrap justify-center">
-                {"Have a question or a project in mind? We'd love to hear from you! Reach out to us through the form below.".split(" ").map((word, i) => (
-                    <span
-                        key={`text-word-${i}`}
-                        ref={(el) => {
-                            // Null check for elementRefs.current before assignment
-                            if (elementRefs?.current) {
-                                elementRefs.current[`text-word-${i}`] = el;
-                            }
-                        }}
-                        style={getStyle(`text-word-${i}`)}
-                        className="inline-block mr-1 mb-1"
-                    >
-                        {word}
-                    </span>
-                ))}
-            </p>
-
-            <form
-                className="w-full max-w-lg bg-white p-8 rounded-xl shadow-md"
-                ref={(el) => {
-                    // Null check for elementRefs.current before assignment
-                    if (elementRefs?.current) {
-                        elementRefs.current['contact-form'] = el;
-                    }
-                }}
-                style={getStyle('contact-form')}
+        <>
+            <section
+                id="contact"
+                className="section-container p-10 my-12 min-h-screen flex flex-col justify-center items-center text-center overflow-hidden"
+                onClick={calculateHitElements}
             >
-                {['name', 'email', 'message'].map((field, index) => (
-                    <div className="mb-6" key={field}>
-                        {field === 'message' ? (
-                            <textarea
-                                placeholder="Your Message"
-                                rows={6}
-                                className="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-200"
-                                ref={(el) => {
-                                    // Null check for elementRefs.current before assignment
-                                    if (elementRefs?.current) {
-                                        elementRefs.current[`input-${field}`] = el;
-                                    }
-                                }}
-                                style={getStyle(`input-${field}`)}
-                            ></textarea>
-                        ) : (
-                            <input
-                                type={field === 'email' ? 'email' : 'text'}
-                                placeholder={`Your ${field.charAt(0).toUpperCase() + field.slice(1)}`}
-                                className="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-200"
-                                ref={(el) => {
-                                    // Null check for elementRefs.current before assignment
-                                    if (elementRefs?.current) {
-                                        elementRefs.current[`input-${field}`] = el;
-                                    }
-                                }}
-                                style={getStyle(`input-${field}`)}
-                            />
-                        )}
-                    </div>
-                ))}
-                <button
-                    type="submit"
-                    className="w-full px-6 py-3 bg-indigo-500 text-white text-lg font-semibold rounded-xl shadow-lg hover:bg-cyan-600 transform hover:scale-105 transition duration-300 ease-in-out flex justify-center flex-wrap gap-1"
-                    style={{ background: '#32cacd' }}
-                >
-                    {"Send Message".split(" ").map((word, i) => (
+                <h2 className="text-4xl font-bold mb-8" style={{ color: '#32cacd' }}>
+                    {"Get in Touch".split(" ").map((word, i) => (
                         <span
-                            key={`button-word-${i}`}
+                            key={`heading-word-${i}`}
                             ref={(el) => {
                                 // Null check for elementRefs.current before assignment
                                 if (elementRefs?.current) {
-                                    elementRefs.current[`button-word-${i}`] = el;
+                                    elementRefs.current[`heading-word-${i}`] = el;
                                 }
                             }}
-                            style={getStyle(`button-word-${i}`)}
-                            className="inline-block"
+                            style={getStyle(`heading-word-${i}`)}
+                            className="inline-block mr-2"
                         >
                             {word}
                         </span>
                     ))}
-                </button>
-            </form>
-        </section>
+                </h2>
+
+                <p className="text-lg text-gray-700 mb-8 max-w-2xl flex flex-wrap justify-center">
+                    {"Have a question or a project in mind? We'd love to hear from you! Reach out to us through the form below.".split(" ").map((word, i) => (
+                        <span
+                            key={`text-word-${i}`}
+                            ref={(el) => {
+                                // Null check for elementRefs.current before assignment
+                                if (elementRefs?.current) {
+                                    elementRefs.current[`text-word-${i}`] = el;
+                                }
+                            }}
+                            style={getStyle(`text-word-${i}`)}
+                            className="inline-block mr-1 mb-1"
+                        >
+                            {word}
+                        </span>
+                    ))}
+                </p>
+
+                <form
+                    className="w-full max-w-lg bg-white p-8 rounded-xl shadow-md"
+                    ref={(el) => {
+                        // Null check for elementRefs.current before assignment
+                        if (elementRefs?.current) {
+                            elementRefs.current['contact-form'] = el;
+                        }
+                    }}
+                    style={getStyle('contact-form')}
+                >
+                    {['name', 'email', 'message'].map((field, index) => (
+                        <div className="mb-6" key={field}>
+                            {field === 'message' ? (
+                                <textarea
+                                    placeholder="Your Message"
+                                    rows={6}
+                                    className="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-200"
+                                    ref={(el) => {
+                                        // Null check for elementRefs.current before assignment
+                                        if (elementRefs?.current) {
+                                            elementRefs.current[`input-${field}`] = el;
+                                        }
+                                    }}
+                                    style={getStyle(`input-${field}`)}
+                                ></textarea>
+                            ) : (
+                                <input
+                                    type={field === 'email' ? 'email' : 'text'}
+                                    placeholder={`Your ${field.charAt(0).toUpperCase() + field.slice(1)}`}
+                                    className="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-200"
+                                    ref={(el) => {
+                                        // Null check for elementRefs.current before assignment
+                                        if (elementRefs?.current) {
+                                            elementRefs.current[`input-${field}`] = el;
+                                        }
+                                    }}
+                                    style={getStyle(`input-${field}`)}
+                                />
+                            )}
+                        </div>
+                    ))}
+                    <button
+                        type="submit"
+                        className="w-full px-6 py-3 bg-indigo-500 text-white text-lg font-semibold rounded-xl shadow-lg hover:bg-cyan-600 transform hover:scale-105 transition duration-300 ease-in-out flex justify-center flex-wrap gap-1"
+                        style={{ background: '#32cacd' }}
+                    >
+                        {"Send Message".split(" ").map((word, i) => (
+                            <span
+                                key={`button-word-${i}`}
+                                ref={(el) => {
+                                    // Null check for elementRefs.current before assignment
+                                    if (elementRefs?.current) {
+                                        elementRefs.current[`button-word-${i}`] = el;
+                                    }
+                                }}
+                                style={getStyle(`button-word-${i}`)}
+                                className="inline-block"
+                            >
+                                {word}
+                            </span>
+                        ))}
+                    </button>
+                </form>
+            </section>
+
+            <footer className="py-10 bg-gray-200 text-white">
+                {/* Social Icons */}
+                <ul className="social-list">
+                    <li>
+                        <a href="#" className="apple">
+                            <FaGithub className='fab' />
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" className="instagram">
+                            <IoMdMail className='fab' />
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" className="twitter">
+                            <FaTwitter className='fab' />
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" className="facebook">
+                            <FaLinkedin className='fab' />
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" className="apple">
+                            <FaCodepen className='fab' />
+                        </a>
+                    </li>
+                </ul>
+
+                {/* Navigation Links */}
+                <div className="text-center mb-6 space-x-6 text-black">
+                    <a href="#home" className="hover:text-peach transition">
+                        Home
+                    </a>
+                    <a href="#about" className="hover:text-peach transition">
+                        About
+                    </a>
+                    <a href="#projects" className="hover:text-peach transition">
+                        Projects
+                    </a>
+                    <a href="#contact" className="hover:text-peach transition">
+                        Contact
+                    </a>
+                    <a href="#resume" className="hover:text-peach transition">
+                        Resume
+                    </a>
+                </div>
+
+                {/* Footer Info */}
+                <div className="flex items-center justify-center space-x-4 text-sm mb-40 text-black">
+                    <img
+                        src="src/assets/avatar.png"
+                        alt="Avatar"
+                        className="w-8 h-8 rounded-full object-cover"
+                    />
+                    <a
+                        href="mailto:imumairhamza@gmail.com"
+                        className="hover:text-peach transition underline"
+                    >
+                        imumairhamza@gmail.com
+                    </a>
+                </div>
+            </footer>
+        </>
     );
 };
 

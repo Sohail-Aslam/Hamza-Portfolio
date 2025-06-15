@@ -1,9 +1,11 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { FaGithub, FaTwitter, FaCodepen } from "react-icons/fa";
 import { FaLinkedin } from "react-icons/fa6";
 import { IoMdMail } from "react-icons/io";
 import { GoMoveToEnd } from "react-icons/go";
 import { useBomb } from '../component/BombContext';
+import { useTheme } from '../component/ThemeContext'; // Adjust path if needed
+import useSound from 'use-sound';
 
 const socialIcons = [
   {
@@ -54,6 +56,10 @@ const parseTransform = (transformString: string) => {
 };
 
 const Header = () => {
+  const [playBombSound] = useSound('src/assets/bomb.mp3'); // adjust path as needed
+  const [bombTriggered, setBombTriggered] = React.useState(false);
+  const [firePoints, setFirePoints] = useState<{ x: number; y: number; id: string }[]>([]);
+
   const {
     bombMode,
     adjustablePower,
@@ -64,6 +70,14 @@ const Header = () => {
     setHitElementsTransforms,
     elementRefs,
   } = useBomb();
+  const { isDay, toggleDayNight } = useTheme();
+  useEffect(() => {
+    if (!isDay) { // If it's not day, it's night (dark mode)
+      document.body.classList.add('dark-mode');
+    } else {
+      document.body.classList.remove('dark-mode');
+    }
+  }, [isDay]); // Re-run this effect whenever isDay changes
 
   // Provide default values for variables that might be undefined from useBomb()
   const currentBombMode: boolean = bombMode ?? false;
@@ -85,14 +99,44 @@ const Header = () => {
   }, []);
 
   const calculateHitElements = (e: React.MouseEvent) => {
-    // Use the potentially defaulted/asserted value
-    if (!currentBombMode) return;
+    if (!currentBombMode) {
+      console.log("Bomb mode is OFF, no sound will play");
+      return;
+    }
+
+    console.log("Bomb mode ON, attempting to play sound");
 
     const clickX = e.clientX;
     const clickY = e.clientY;
+
+    // ✅ Avoid duplicate fire at nearly same spot
+    const minDistance = 30;
+    const alreadyExists = firePoints.some(({ x, y }) => {
+      const dx = x - clickX;
+      const dy = y - clickY;
+      return Math.sqrt(dx * dx + dy * dy) < minDistance;
+    });
+
+    if (!alreadyExists) {
+      const fireId = Date.now().toString();
+      setFirePoints(prev => [...prev, { x: clickX, y: clickY, id: fireId }]);
+
+      // 🕒 Remove after 1 second (duration of fire GIF)
+      setTimeout(() => {
+        setFirePoints(prev => prev.filter(f => f.id !== fireId));
+      }, 600);
+    }
+
+    try {
+      playBombSound(); // Just trigger, no await or .then
+      console.log("Sound trigger function called");
+      setBombTriggered(true);
+    } catch (error) {
+      console.error("Error while playing sound:", error);
+    }
+
     const newTransforms = new Map<string, string>();
 
-    // Ensure elementRefs.current is not null before proceeding
     if (elementRefs.current) {
       Object.entries(elementRefs.current).forEach(([id, el]) => {
         if (el && isElementInViewport(el)) {
@@ -102,10 +146,8 @@ const Header = () => {
 
           const dx = currentElementCenterX - clickX;
           const dy = currentElementCenterY - clickY;
-
           const distance = Math.sqrt(dx * dx + dy * dy);
 
-          // Use the potentially defaulted/asserted values in calculations
           if (distance <= currentAdjustableRadius) {
             const forceMultiplier = (currentAdjustableRadius - distance) / currentAdjustableRadius;
 
@@ -135,13 +177,19 @@ const Header = () => {
     setBombPoint({ x: clickX, y: clickY });
     setHitElementsTransforms(prev => new Map([...prev, ...newTransforms]));
   };
+  const imageList = [
+    'src/assets/image1 (1).png',
+    'src/assets/image2 (2).png',
+    'src/assets/image3 (3).png',
+    'src/assets/image4 (4).png',
+    'src/assets/image5 (5).png',
+  ];
 
   return (
     <div id="home"
       className="select-none font-inter overflow-hidden min-h-screen flex flex-col justify-center items-center text-center z-50 "
       onClick={calculateHitElements}
     >
-      {/* Controls Bar */}
 
       <div className="flex flex-col-reverse items-center w-full section-container w-full py-10 bottom-15">
         {/* Left content */}
@@ -257,6 +305,21 @@ const Header = () => {
           />
         </div>
       </div>
+      {firePoints.map((point) => (
+        <img
+          key={point.id}
+          src={`src/assets/fire.gif?id=${point.id}`} // 👈 trick: force reload
+          alt="Explosion"
+          className="pointer-events-none absolute w-32 h-32"
+          style={{
+            top: point.y - 64,
+            left: point.x - 64,
+            zIndex: 9999,
+          }}
+        />
+      ))}
+
+
     </div>
   );
 };

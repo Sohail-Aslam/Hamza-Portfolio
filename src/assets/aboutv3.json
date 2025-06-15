@@ -1,0 +1,108 @@
+{"frames": {
+
+"achiv..png":
+{
+	"frame": {"x":0,"y":0,"w":68,"h":90},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":26,"y":15,"w":68,"h":90},
+	"sourceSize": {"w":120,"h":120}
+},
+"atom.png":
+{
+	"frame": {"x":0,"y":402,"w":107,"h":101},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":4,"w":107,"h":101},
+	"sourceSize": {"w":110,"h":110}
+},
+"brain.png":
+{
+	"frame": {"x":0,"y":226,"w":93,"h":86},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":8,"y":12,"w":93,"h":86},
+	"sourceSize": {"w":110,"h":110}
+},
+"briefcase.png":
+{
+	"frame": {"x":93,"y":226,"w":95,"h":90},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":3,"y":3,"w":95,"h":90},
+	"sourceSize": {"w":101,"h":101}
+},
+"cap.png":
+{
+	"frame": {"x":107,"y":402,"w":128,"h":66},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":8,"y":44,"w":128,"h":66},
+	"sourceSize": {"w":144,"h":144}
+},
+"dart.png":
+{
+	"frame": {"x":96,"y":316,"w":98,"h":78},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":11,"y":21,"w":98,"h":78},
+	"sourceSize": {"w":120,"h":120}
+},
+"date.png":
+{
+	"frame": {"x":161,"y":114,"w":84,"h":112},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":18,"y":4,"w":84,"h":112},
+	"sourceSize": {"w":120,"h":120}
+},
+"heart.png":
+{
+	"frame": {"x":0,"y":316,"w":96,"h":86},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":12,"y":17,"w":96,"h":86},
+	"sourceSize": {"w":120,"h":120}
+},
+"location (1).png":
+{
+	"frame": {"x":141,"y":0,"w":78,"h":114},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":21,"y":3,"w":78,"h":114},
+	"sourceSize": {"w":120,"h":120}
+},
+"text.png":
+{
+	"frame": {"x":0,"y":114,"w":78,"h":94},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":21,"y":13,"w":78,"h":94},
+	"sourceSize": {"w":120,"h":120}
+},
+"user.png":
+{
+	"frame": {"x":78,"y":114,"w":83,"h":91},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":32,"y":28,"w":83,"h":91},
+	"sourceSize": {"w":147,"h":147}
+},
+"wrench.png":
+{
+	"frame": {"x":68,"y":0,"w":73,"h":83},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":8,"y":3,"w":73,"h":83},
+	"sourceSize": {"w":94,"h":94}
+}},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "aboutv2.webp",
+	"format": "RGBA8888",
+	"size": {"w":245,"h":503},
+	"scale": "0.15",
+	"smartupdate": "$TexturePacker:SmartUpdate:77deb48749b3bb12e1ae89fcc4aa1cfe:1d3ad93c846f50d3da878767c76da1c2:9a87683ce56dd0a9f6dce0e2e5065365$"
+}
+}

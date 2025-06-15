@@ -13,6 +13,10 @@ import { TbBomb } from "react-icons/tb";
 import { TbBombFilled } from "react-icons/tb";
 import { RiResetLeftLine } from "react-icons/ri";
 import '../App.css';
+import DayNight from './dayNight';
+import { useTheme } from "../component/ThemeContext";
+import { MdLightMode } from "react-icons/md";
+import { MdDarkMode } from "react-icons/md";
 class Vector {
     x: number;
     y: number;
@@ -242,7 +246,7 @@ class Rope {
 }
 const App: React.FC = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-
+    const { isDay, toggleDayNight } = useTheme();
     const {
         bombMode,
         setBombMode,
@@ -354,7 +358,7 @@ const App: React.FC = () => {
         // Resize handler
         const handleResize = () => {
             if (!canvas) return;
-            canvas.width = window.innerWidth *.15;
+            canvas.width = window.innerWidth * .15;
             canvas.height = window.innerHeight;
             if (!ropeRef.current) {
                 initializeRope();
@@ -388,7 +392,7 @@ const App: React.FC = () => {
             ctx.strokeStyle = '#000';
             ctx.lineWidth = 3;
             ctx.lineCap = 'round';
-            
+
 
             ropeRef.current.sticks.forEach(s => {
                 ctx.moveTo(s.p1.pos.x, s.p1.pos.y);
@@ -442,7 +446,7 @@ const App: React.FC = () => {
             window.removeEventListener('resize', handleResize);
             cancelAnimationFrame(animationRef.current);
         };
-    }, [ isWrapped, activeTab]);
+    }, [isWrapped, activeTab]);
     const toggleWrap = useCallback(() => {
         if (ropeRef.current) {
             ropeRef.current.toggleWrap();
@@ -466,8 +470,8 @@ const App: React.FC = () => {
     return (
         <div className="relative w-full h-66 font-sans">
             {/* Menu Button */}
-            <div className="z-[1150] fixed top-0 left-0 p-4 bg-white/30 backdrop-blur-sm border-2 p-2 rounded-lg border-gray-400 "> 
-            <div className="flex gap-16">
+            <div className="z-[1150] fixed top-0 left-0 p-4">
+                <div className="flex gap-16 text-2xl">
                     <div
                         ref={menuRef}
                         onClick={toggleWrap}
@@ -501,6 +505,14 @@ const App: React.FC = () => {
                         aria-label="Reset Bomb Settings"
                     >
                         <RiResetLeftLine />
+                    </button>
+                    <button
+                        onClick={toggleDayNight}
+                        className={`px-4 py-2 rounded text-black`}
+                    >
+                        {isDay ? <MdDarkMode />
+                            : <MdLightMode />
+                        }
                     </button>
 
                     <button
@@ -578,8 +590,8 @@ const App: React.FC = () => {
             />
 
             {/* Content Sections */}
-            <div className={`relative pt-24 ${bombMode ? 'z-10' : 'z-5'}`}>
-            <BombControls />
+            <DayNight />            <div className={`relative pt-24 ${bombMode ? 'z-10' : 'z-5'}`}>
+                <BombControls />
 
                 <section id="header" className={`min-h-screen  ${dynamicZIndex}`}>
                     {/* <ShapeLayer /> */}
