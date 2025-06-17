@@ -1,3 +1,4 @@
+// component/BombContext.tsx
 import React, { createContext, useContext, useState, useRef } from 'react';
 
 // Define the type for the context value
@@ -9,24 +10,21 @@ interface BombContextType {
     hitElementsTransforms: Map<string, string>;
     setHitElementsTransforms: React.Dispatch<React.SetStateAction<Map<string, string>>>;
     elementRefs: React.MutableRefObject<Record<string, HTMLElement | null>>;
-    // If you add functions like calculateHitElements, reset, etc., define them here too:
     calculateHitElements?: (e: React.MouseEvent) => void;
-    reset?: () => void;
-    adjustablePower?: number; // Add these if you pass them through context
+    reset: () => void; // Make sure reset is defined and required
+    adjustablePower?: number;
     setAdjustablePower?: React.Dispatch<React.SetStateAction<number>>;
     adjustableRadius?: number;
     setAdjustableRadius?: React.Dispatch<React.SetStateAction<number>>;
     adjustableRotation?: number;
     setAdjustableRotation?: React.Dispatch<React.SetStateAction<number>>;
-    firePoints: { x: number; y: number; id: string } [];
+    firePoints: { x: number; y: number; id: string }[];
     setFirePoints: React.Dispatch<React.SetStateAction<{ x: number; y: number; id: string }[]>>;
     triggerExplosion: (x: number, y: number) => void;
 }
 
 // Provide a default value that matches the context type.
-// All properties should be present, even if some are null/undefined initially.
 const BombContext = createContext<BombContextType | null>(null);
-
 
 export const BombProvider = ({ children }: { children: React.ReactNode }) => {
     const [bombMode, setBombMode] = useState<boolean>(false);
@@ -35,11 +33,11 @@ export const BombProvider = ({ children }: { children: React.ReactNode }) => {
     const elementRefs = useRef<Record<string, HTMLElement | null>>({});
     const [firePoints, setFirePoints] = useState<{ x: number; y: number; id: string }[]>([]);
 
-    const bombSoundRef = useRef(new Audio("/assets/bomb.mp3")); // Or howler.js if you prefer
+    const bombSoundRef = useRef(new Audio("/assets/bomb.mp3"));
+
     const triggerExplosion = (x: number, y: number) => {
         if (!bombMode) return;
 
-        // Play sound
         try {
             bombSoundRef.current.currentTime = 0;
             bombSoundRef.current.play().catch((err) => {
@@ -49,32 +47,32 @@ export const BombProvider = ({ children }: { children: React.ReactNode }) => {
             console.error("Failed to play bomb sound:", err);
         }
 
-        // Show fire animation
         const fireId = Date.now().toString();
         setFirePoints(prev => [...prev, { x, y, id: fireId }]);
         setTimeout(() => {
             setFirePoints(prev => prev.filter(f => f.id !== fireId));
         }, 1000); // match your GIF duration
     };
-    
-    // You need to define these in the provider if they are part of the context value
+
     const [adjustableRadius, setAdjustableRadius] = useState(210);
     const [adjustablePower, setAdjustablePower] = useState(80);
     const [adjustableRotation, setAdjustableRotation] = useState(8);
 
-    // Define the functions if they are to be part of the context
-    // This is a placeholder for your actual calculateHitElements and reset functions.
-    // You would typically define them within the BombProvider or import them.
-    const calculateHitElements = () => { // Removed 'e: React.MouseEvent'
-
-        // Your calculation logic here
-        console.log("Calculating hit elements (placeholder)");
-    };
-
+    // Modified reset function: Clear the transforms
     const reset = () => {
-        window.location.reload();
+        setHitElementsTransforms(new Map()); // This will revert elements to their original positions
+        setFirePoints([]); // Clear any lingering fire animations
+        setBombPoint(null); // Clear bomb point if needed
     };
-    
+
+    // calculateHitElements needs to be defined within the provider or passed as a prop if it's used directly from context
+    const calculateHitElements = (e: React.MouseEvent) => {
+        // Your existing calculateHitElements logic goes here.
+        // It's good that it's defined in Header and then called.
+        // If you were to move it here, it would need access to elementRefs directly.
+        // For now, let's assume it's correctly handled in the Header as you have it.
+        console.log("Calculating hit elements (placeholder - defined in Header)");
+    };
 
     return (
         <BombContext.Provider value={{
@@ -82,7 +80,7 @@ export const BombProvider = ({ children }: { children: React.ReactNode }) => {
             bombPoint, setBombPoint,
             hitElementsTransforms, setHitElementsTransforms,
             elementRefs,
-            calculateHitElements,
+            calculateHitElements, // Include in context
             reset,
             adjustablePower, setAdjustablePower,
             adjustableRadius, setAdjustableRadius,
@@ -90,7 +88,6 @@ export const BombProvider = ({ children }: { children: React.ReactNode }) => {
             firePoints, setFirePoints,
             triggerExplosion,
         }}>
-
             {children}
         </BombContext.Provider>
     );

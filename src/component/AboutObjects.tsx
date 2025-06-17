@@ -1,13 +1,15 @@
+// src/pages/AboutObjects.tsx
+
 import { useState, useRef, useEffect, useCallback } from 'react';
 import spriteImg from '../assets/aboutv3.webp';
 import spriteData from '../assets/aboutv3.json';
 import { useBomb } from '../component/BombContext';
-import { useRopeContext } from '../component/RopeState';
-import RopeCanvs from '../component/RopeCanvs';
-
+// import { useRopeContext } from '../component/RopeState'; // No longer needed for `areAllShrunk`
+import RopeCanvas from './RopeCanvs'
 export default function AboutObjects() {
     const { elementRefs, hitElementsTransforms } = useBomb();
-    const { areAllShrunk } = useRopeContext();
+    // const { areAllShrunk } = useRopeContext(); // REMOVED - now local state
+    const [areAllShrunk, setAreAllShrunk] = useState(false); // NEW: Local state for shrink
     const containerRef = useRef<HTMLDivElement>(null);
 
     interface Frame {
@@ -58,8 +60,6 @@ export default function AboutObjects() {
         { heading: "Expertise area", name: 'briefcase.png', expandedLeft: '79%', expandedTop: '79%', rotation: 0, scale: 1, delay: 150, shrunkWidth: '260px', shrunkHeight: '148px', shrunkText: 'Business assets and financial management.', shrunkBorderColor: 'amber-300' },
     ];
 
-
-
     const getGridParameters = useCallback((width: number) => {
         let cols = 4;
         let columnGap = 20;
@@ -96,35 +96,36 @@ export default function AboutObjects() {
 
         return { cols, columnGap, rowGap, paddingTop, paddingLeft, baseItemWidth };
     }, []);
+
     const calculateShrunkPositions = useCallback((containerWidth: number) => {
         if (containerWidth === 0) {
             return { positions: new Map(), maxContainerHeight: 0, paddingTop: 0 };
         }
-        
+
         const positions = new Map<string, { left: number, top: number }>();
-        
+
         const { cols, columnGap, rowGap, paddingTop, paddingLeft, baseItemWidth } = getGridParameters(containerWidth);
-        
+
         const columnHeights: number[] = Array(cols).fill(paddingTop);
         const columnXPositions: number[] = [];
         for (let i = 0; i < cols; i++) {
             columnXPositions.push(paddingLeft + (i * (baseItemWidth + columnGap)));
         }
-        
+
         const indexedShapes = shapes.map((shape, originalIndex) => ({ shape, originalIndex }));
         indexedShapes.sort((a, b) => a.originalIndex - b.originalIndex);
-        
+
         indexedShapes.forEach(({ shape, originalIndex }) => {
             const id = `about-shape-${originalIndex}`;
             const colSpan = shape.colSpan || 1;
-            
+
             let bestColumnIndex = -1;
             let minHeight = Infinity;
-            
+
             for (let i = 0; i <= cols - colSpan; i++) {
                 let maxBlockHeightInCurrentSpot = 0;
                 for (let j = 0; j < colSpan; j++) {
-                   
+
                     maxBlockHeightInCurrentSpot = Math.max(maxBlockHeightInCurrentSpot, columnHeights[i + j]);
                 }
 
@@ -139,7 +140,7 @@ export default function AboutObjects() {
             }
 
             const currentLeft = columnXPositions[bestColumnIndex];
-            const currentTop = columnHeights[bestColumnIndex];
+            const currentTop = minHeight; // Use minHeight directly here
 
             positions.set(id, { left: currentLeft, top: currentTop });
 
@@ -165,12 +166,7 @@ export default function AboutObjects() {
         const handleResize = () => {
             if (containerRef.current) {
                 const newWidth = containerRef.current.clientWidth;
-                setCurrentContainerWidth(prevWidth => {
-                    if (prevWidth !== newWidth) {
-                        return newWidth;
-                    }
-                    return prevWidth;
-                });
+                setCurrentContainerWidth(newWidth); // Simplified
             }
         };
 
@@ -184,9 +180,20 @@ export default function AboutObjects() {
         if (currentContainerWidth > 0) {
             const newLayoutData = calculateShrunkPositions(currentContainerWidth);
             setShrunkLayoutData(prevLayoutData => {
+                // More robust check to avoid unnecessary updates if layout data is the same
                 if (
                     prevLayoutData.maxContainerHeight === newLayoutData.maxContainerHeight &&
-                    prevLayoutData.paddingTop === newLayoutData.paddingTop
+                    prevLayoutData.paddingTop === newLayoutData.paddingTop &&
+                    // Also compare positions map (shallow comparison for simplicity, or deep if needed)
+                    // For a Map, comparing references is enough if you always create a new Map for changes.
+                    // If content changes but map object is same, you need a deep comparison or force new map.
+                    // Assuming calculateShrunkPositions returns a new Map if content changes.
+                    prevLayoutData.positions.size === newLayoutData.positions.size &&
+                    Array.from(prevLayoutData.positions.keys()).every(key => {
+                        const p1 = prevLayoutData.positions.get(key);
+                        const p2 = newLayoutData.positions.get(key);
+                        return p1 && p2 && p1.left === p2.left && p1.top === p2.top;
+                    })
                 ) {
                     return prevLayoutData;
                 }
@@ -195,26 +202,28 @@ export default function AboutObjects() {
         }
     }, [currentContainerWidth, calculateShrunkPositions]);
 
-    const { triggerExplosion, firePoints } = useBomb();
+    // NEW: Callback for RopeCanvas to toggle local shrink state
+    const handleRopePulled = useCallback(() => {
+        setAreAllShrunk(prev => !prev);
+    }, []);
 
-    const handleClick = (e: React.MouseEvent) => {
-        triggerExplosion(e.clientX, e.clientY);
-    };
-    
     return (
         <div className="absolute inset-0 pointer-events-auto overflow-hidden m-10">
+            {/* You can uncomment this button if you want another way to toggle,
+                but it will now toggle the local state. */}
             {/* <button
-                onClick={handleToggleAllShrink}
+                onClick={() => setAreAllShrunk(prev => !prev)}
                 className="absolute top-4 left-4 z-10 px-4 py-2 bg-blue-500 text-white rounded cursor-pointer pointer-events-auto rounded-md"
             >
                 {areAllShrunk ? 'Expand All Objects' : 'Shrink All Objects'}
             </button> */}
-            <RopeCanvs />
+
+            {/* Pass the local state and the local toggle callback to RopeCanvas */}
+            <RopeCanvas onRopePulled={handleRopePulled} isShrunk={areAllShrunk} />
 
 
             <div
                 ref={containerRef}
-                
                 className="relative mx-auto w-full max-w-[1200px] h-full "
                 style={{
                     height: areAllShrunk ? `${shrunkLayoutData.maxContainerHeight}px` : '100%',
@@ -288,7 +297,7 @@ export default function AboutObjects() {
                     return (
                         <div
                             key={id}
-                            
+
                             ref={(el: HTMLDivElement | null) => {
                                 if (el) elementRefs.current[id] = el;
                             }}
@@ -327,9 +336,6 @@ export default function AboutObjects() {
                             </div>
 
                             <div
-                                ref={(el: HTMLDivElement | null) => {
-                                    if (el) elementRefs.current[id] = el;
-                                }}
                                 className={infoBoxClasses}
                                 style={infoBoxStyles}
                             >
@@ -338,7 +344,7 @@ export default function AboutObjects() {
                                     style={{
                                         paddingLeft: areAllShrunk ? `${iconOffsetLeftShrunk + (frame.w * iconScaleShrunk) + 20}px` : '0px',
                                         paddingTop: areAllShrunk ? '5px' : '0px',
-                                        
+
                                     }}
                                 >
                                     {shape.heading.replace('.png', '').replace('.jpg', '')}
@@ -356,18 +362,6 @@ export default function AboutObjects() {
                     );
                 })}
             </div>
-            {firePoints.map((point) => (
-                <img
-                    key={point.id}
-                    src={`/assets/fire.gif?id=${point.id}`} // force reload
-                    className="absolute pointer-events-none w-32 h-32"
-                    style={{
-                        top: point.y - 64,
-                        left: point.x - 64,
-                        zIndex: 9999,
-                    }}
-                />
-            ))}
 
         </div>
     );

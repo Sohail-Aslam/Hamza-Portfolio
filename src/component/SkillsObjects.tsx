@@ -1,14 +1,17 @@
+// src/pages/AboutObjects.tsx (This is your Skills page)
+
 import { useState, useRef, useEffect, useCallback } from 'react';
-import spriteImg from '../assets/skillsv2v1.webp';
-import spriteData from '../assets/skillsv2v1.json';
+import spriteImg from '../assets/skillsv2v1.webp'; // Your skills sprite image
+import spriteData from '../assets/skillsv2v1.json'; // Your skills sprite data
 import { useBomb } from '../component/BombContext';
-import { useRopeContext } from '../component/RopeState';
-import RopeCanvs from '../component/RopeCanvs';
+// import { useRopeContext } from '../component/RopeState'; // REMOVE this import
+import RopeCanvas from './RopeCanvs'; // Ensure this is correctly named RopeCanvas, not RopeCanvs
 
 export default function AboutObjects() {
     const { elementRefs, hitElementsTransforms } = useBomb();
     const containerRef = useRef<HTMLDivElement>(null);
-    const { areAllShrunk } = useRopeContext();
+    // REMOVE: const { areAllShrunk } = useRopeContext();
+    const [areAllShrunk, setAreAllShrunk] = useState(false); // NEW: Local state for shrinking
 
     interface Frame {
         x: number;
@@ -43,7 +46,6 @@ export default function AboutObjects() {
     const parsePixelValue = (pixelString: string): number => {
         return parseFloat(pixelString.replace('px', ''));
     };
-
 
     const shapes: CustomShape[] = [
         { name: 'html.png', heading: 'HTML5', expandedLeft: '34%', expandedTop: '17%', rotation: 0, scale: 1, delay: 500, shrunkWidth: '530px', shrunkHeight: '200px', shrunkText: 'HTML is the standard markup language for building web pages. It defines the structure of content on the web using elements and tags.', shrunkBorderColor: 'blue-700', colSpan: 2 },
@@ -118,7 +120,7 @@ export default function AboutObjects() {
         indexedShapes.sort((a, b) => a.originalIndex - b.originalIndex);
 
         indexedShapes.forEach(({ shape, originalIndex }) => {
-            const id = `skills-shape-${originalIndex}`;
+            const id = `skills-shape-${originalIndex}`; // Corrected ID prefix for skills page
             const colSpan = shape.colSpan || 1;
 
             let bestColumnIndex = -1;
@@ -141,7 +143,7 @@ export default function AboutObjects() {
             }
 
             const currentLeft = columnXPositions[bestColumnIndex];
-            const currentTop = columnHeights[bestColumnIndex];
+            const currentTop = minHeight; // Use minHeight here for proper flow
 
             positions.set(id, { left: currentLeft, top: currentTop });
 
@@ -161,18 +163,11 @@ export default function AboutObjects() {
         { positions: new Map(), maxContainerHeight: 0, paddingTop: 0 }
     );
 
-    // This useEffect will now *only* set up the resize listener.
-    // The initial measurement and layout calculation will happen in a separate effect.
     useEffect(() => {
         const handleResize = () => {
             if (containerRef.current) {
                 const newWidth = containerRef.current.clientWidth;
-                setCurrentContainerWidth(prevWidth => {
-                    if (prevWidth !== newWidth) {
-                        return newWidth;
-                    }
-                    return prevWidth;
-                });
+                setCurrentContainerWidth(newWidth);
             }
         };
 
@@ -188,7 +183,12 @@ export default function AboutObjects() {
             setShrunkLayoutData(prevLayoutData => {
                 if (
                     prevLayoutData.maxContainerHeight === newLayoutData.maxContainerHeight &&
-                    prevLayoutData.paddingTop === newLayoutData.paddingTop
+                    prevLayoutData.paddingTop === newLayoutData.paddingTop &&
+                    Array.from(prevLayoutData.positions.keys()).every(key => {
+                        const p1 = prevLayoutData.positions.get(key);
+                        const p2 = newLayoutData.positions.get(key);
+                        return p1 && p2 && p1.left === p2.left && p1.top === p2.top;
+                    })
                 ) {
                     return prevLayoutData;
                 }
@@ -197,15 +197,19 @@ export default function AboutObjects() {
         }
     }, [currentContainerWidth, calculateShrunkPositions]);
 
+    // NEW: Callback function to pass to RopeCanvas
+    const handleRopePulled = useCallback(() => {
+        setAreAllShrunk(prev => !prev);
+    }, []);
 
     return (
         <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden m-10">
-            <RopeCanvs />
+            {/* Pass the local state and the local toggle callback to RopeCanvas */}
+            <RopeCanvas onRopePulled={handleRopePulled} isShrunk={areAllShrunk} />
 
 
             <div
                 ref={containerRef}
-                
                 className="relative mx-auto w-full max-w-[1200px] h-full pointer-events-auto"
                 style={{
                     height: areAllShrunk ? `${shrunkLayoutData.maxContainerHeight}px` : '100%',
@@ -214,7 +218,7 @@ export default function AboutObjects() {
                 }}
             >
                 {shapes.map((shape, index) => {
-                    const id = `skills-shape-${index}`;
+                    const id = `skills-shape-${index}`; // Ensure ID consistency
                     const transformFromBomb = hitElementsTransforms.get(id);
                     const frame = getFrameByName(shape.name);
 
@@ -279,7 +283,6 @@ export default function AboutObjects() {
                     return (
                         <div
                             key={id}
-                            
                             ref={(el: HTMLDivElement | null) => {
                                 if (el) elementRefs.current[id] = el;
                             }}
@@ -318,9 +321,6 @@ export default function AboutObjects() {
                             </div>
 
                             <div
-                                ref={(el: HTMLDivElement | null) => {
-                                    if (el) elementRefs.current[id] = el;
-                                }}
                                 className={infoBoxClasses}
                                 style={infoBoxStyles}
                             >
@@ -329,7 +329,6 @@ export default function AboutObjects() {
                                     style={{
                                         paddingLeft: areAllShrunk ? `${iconOffsetLeftShrunk + (frame.w * iconScaleShrunk) + 20}px` : '0px',
                                         paddingTop: areAllShrunk ? '5px' : '0px',
-                                        
                                     }}
                                 >
                                     {shape.heading.replace('.png', '').replace('.jpg', '')}

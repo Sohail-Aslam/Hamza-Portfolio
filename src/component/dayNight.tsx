@@ -2,7 +2,7 @@ import React from 'react';
 import { useTheme } from "../component/ThemeContext";
 
 const DayNight: React.FC = () => {
-    const { isDay, toggleDayNight } = useTheme();
+    const { isDay } = useTheme();
 
     const sunMoonPosition = isDay
         ? 'top-1/4 left-1/2 -translate-x-1/2 opacity-70'

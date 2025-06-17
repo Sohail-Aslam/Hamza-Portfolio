@@ -216,69 +216,68 @@ const Contact = () => {
             </section>
 
             <footer className="py-10 bg-gray-200 text-white">
-                {/* Social Icons */}
-                <ul className="social-list">
-                    <li>
-                        <a href="#" className="apple">
-                            <FaGithub className='fab' />
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" className="instagram">
-                            <IoMdMail className='fab' />
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" className="twitter">
-                            <FaTwitter className='fab' />
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" className="facebook">
-                            <FaLinkedin className='fab' />
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" className="apple">
-                            <FaCodepen className='fab' />
-                        </a>
-                    </li>
-                </ul>
+                <div className="container mx-auto md:px-2 px-10 flex flex-col md:flex-row justify-between items-start md:items-center">
 
-                {/* Navigation Links */}
-                <div className="text-center mb-6 space-x-6 text-black">
-                    <a href="#home" className="hover:text-peach transition">
-                        Home
-                    </a>
-                    <a href="#about" className="hover:text-peach transition">
-                        About
-                    </a>
-                    <a href="#projects" className="hover:text-peach transition">
-                        Projects
-                    </a>
-                    <a href="#contact" className="hover:text-peach transition">
-                        Contact
-                    </a>
-                    <a href="#resume" className="hover:text-peach transition">
-                        Resume
-                    </a>
-                </div>
+                    {/* Left Side: Avatar + Email */}
+                    <div className="flex flex-col items-start space-y-4 mb-10 md:mb-0">
+                        <img
+                            src="src/assets/avatar.png"
+                            alt="Avatar"
+                            className="w-24 h-24 rounded-full object-cover"
+                        />
+                        <a
+                            href="mailto:imumairhamza@gmail.com"
+                            className="text-black hover:text-peach transition underline text-sm"
+                        >
+                            imumairhamza@gmail.com
+                        </a>
+                    </div>
 
-                {/* Footer Info */}
-                <div className="flex items-center justify-center space-x-4 text-sm mb-40 text-black">
-                    <img
-                        src="src/assets/avatar.png"
-                        alt="Avatar"
-                        className="w-8 h-8 rounded-full object-cover"
-                    />
-                    <a
-                        href="mailto:imumairhamza@gmail.com"
-                        className="hover:text-peach transition underline"
-                    >
-                        imumairhamza@gmail.com
-                    </a>
+                    {/* Right Side: Links + Social */}
+                    <div className="flex flex-col items-start md:items-end space-y-6 text-black gap-10">
+
+                        {/* Navigation Links */}
+                        <div className="space-x-8">
+                            <a href="#home" className="hover:text-peach transition">Home</a>
+                            <a href="#about" className="hover:text-peach transition">About</a>
+                            <a href="#achivement" className="hover:text-peach transition">Projects</a>
+                            <a href="#resume" className="hover:text-peach transition">Skills</a>
+                            <a href="#certificates" className="hover:text-peach transition">Certificates</a>
+                            <a href="#contact" className="hover:text-peach transition">Contact</a>
+                        </div>
+
+                        {/* Social Icons */}
+                        <ul className="social-list">
+                            <li>
+                                <a href="#" className="apple">
+                                    <FaGithub className='fab' />
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" className="instagram">
+                                    <IoMdMail className='fab' />
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" className="twitter">
+                                    <FaTwitter className='fab' />
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" className="facebook">
+                                    <FaLinkedin className='fab' />
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" className="apple">
+                                    <FaCodepen className='fab' />
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </footer>
+
         </>
     );
 };

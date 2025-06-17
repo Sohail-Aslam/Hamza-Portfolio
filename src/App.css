@@ -354,6 +354,9 @@ body.dark-mode { /* Adjust for the `text-[#0ea5e9]` class */
   background-color: #000;
 }
 
+body.dark-mode footer {
+  background-color: rgba(44, 44, 44, 0.6); /* Semi-transparent dark background */
+}
 
 /* Adjust the contact button */
 body.dark-mode .group-hover\:text-white {

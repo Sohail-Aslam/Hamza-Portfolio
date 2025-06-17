@@ -203,7 +203,6 @@ class Rope {
             this.points[0].oldPos.y = y;
         }
     }
-
     toggleWrap() {
         this.wrapped = !this.wrapped;
         this.points.forEach((p, i) => p.pinned = (i === 0 && !this.wrapped));
@@ -354,7 +353,31 @@ const App: React.FC = () => {
                 }
             }
         };
+        // Handle mouse movement for cursor change
+        const handleMouseMove = (e: MouseEvent) => {
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
 
+            let cursorChanged = false;
+            for (const hit of hangerHitboxes.current) {
+                if (!hit) continue;
+
+                const dx = mouseX - hit.x;
+                const dy = mouseY - hit.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+
+                if (dist < hit.r) {
+                    canvas.style.cursor = 'pointer';
+                    cursorChanged = true;
+                    break;
+                }
+            }
+
+            if (!cursorChanged) {
+                canvas.style.cursor = 'default';
+            }
+        };
         // Resize handler
         const handleResize = () => {
             if (!canvas) return;
@@ -369,6 +392,7 @@ const App: React.FC = () => {
 
         // Set up event listeners
         canvas.addEventListener('click', handleCanvasClick);
+        canvas.addEventListener('mousemove', handleMouseMove);
         window.addEventListener('resize', handleResize);
 
         // Initialize
@@ -389,7 +413,7 @@ const App: React.FC = () => {
 
             // Draw rope
             ctx.beginPath();
-            ctx.strokeStyle = '#000';
+            ctx.strokeStyle = '#0044a9';
             ctx.lineWidth = 3;
             ctx.lineCap = 'round';
 
@@ -408,20 +432,24 @@ const App: React.FC = () => {
                 if (ropeRef.current && ropeRef.current.points[i] && menuItems[idx]) {
                     const pos = ropeRef.current.points[i].pos;
                     const item = menuItems[idx];
-                    const size = 45;
-                    const radius = 5;
+                    const size = 50;
+                    const radius = 35;
 
                     // Draw rounded rectangle
                     ctx.beginPath();
                     ctx.roundRect(pos.x - size / 2, pos.y - size / 2, size, size, radius);
                     ctx.fillStyle = activeTab === item.id ? '#32cacd' : '#32cauh';
                     ctx.fill();
-
+                    // Shadow for 3D look
+                    ctx.shadowColor = 'rgba(0, 0, 0, 0.29)';
+                    ctx.shadowBlur = 4;
+                    ctx.shadowOffsetX = 4;
+                    ctx.shadowOffsetY = 3;
                     // Draw icon
                     ctx.font = "26px sans-serif";
                     ctx.textAlign = "center";
                     ctx.textBaseline = "middle";
-                    ctx.fillStyle = 'gray';
+                    ctx.fillStyle = '#0044a9';
                     ctx.fillText(item.icon, pos.x, pos.y);
 
                     // Store hitbox
@@ -442,6 +470,7 @@ const App: React.FC = () => {
         return () => {
             if (canvas) {
                 canvas.removeEventListener('click', handleCanvasClick);
+                canvas.removeEventListener('mousemove', handleMouseMove); // Clean up mousemove listener
             }
             window.removeEventListener('resize', handleResize);
             cancelAnimationFrame(animationRef.current);
@@ -470,116 +499,118 @@ const App: React.FC = () => {
     return (
         <div className="relative w-full h-66 font-sans">
             {/* Menu Button */}
-            <div className="z-[1150] fixed top-0 left-0 p-4">
-                <div className="flex gap-16 text-2xl">
-                    <div
-                        ref={menuRef}
-                        onClick={toggleWrap}
-                        className=" text-gray-700 cursor-pointer ease-in-out flex items-center justify-center  "
-                        title={isWrapped ? "Unwrap Rope" : "Wrap Rope"}
-                    >
-                        <IoMdMenu />
-                    </div>
-                    <button
-                        onClick={() => {
-                            safeSetBombMode(!currentBombMode); // Use the safe setter
-                            const btn = document.getElementById("bomb-button");
-                            if (btn) {
-                                btn.classList.remove("shake");
-                                // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                                void btn.offsetWidth;
-                                btn.classList.add("shake");
+            <div className="z-[1150] fixed top-0 left-0">
+                <div className="w-full  shadow-lg p-5">
+                    <div className="w-full flex gap-16  text-2xl">
+                        <div
+                            ref={menuRef}
+                            onClick={toggleWrap}
+                            className=" text-gray-700 cursor-pointer ease-in-out flex items-center justify-center  "
+                            title={isWrapped ? "Unwrap Rope" : "Wrap Rope"}
+                        >
+                            <IoMdMenu />
+                        </div>
+                        <button
+                            onClick={() => {
+                                safeSetBombMode(!currentBombMode); // Use the safe setter
+                                const btn = document.getElementById("bomb-button");
+                                if (btn) {
+                                    btn.classList.remove("shake");
+                                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                                    void btn.offsetWidth;
+                                    btn.classList.add("shake");
+                                }
+                            }}
+                            id="bomb-button"
+                            className={`p-2 cursor-pointer transition-all duration-300 transform rounded-full ${currentBombMode ? 'bg-black p-2 text-white' : 'hover:scale-105'
+                                }`}
+                            aria-label="Toggle Bomb Mode"
+                        >
+                            {currentBombMode ? <TbBombFilled /> : <TbBomb />}
+                        </button>
+
+                        <button
+                            onClick={safeReset} // Use the safe reset function
+                            className="p-2 transition-all duration-300 transform hover:scale-105 focus:outline-none cursor-pointer"
+                            aria-label="Reset Bomb Settings"
+                        >
+                            <RiResetLeftLine />
+                        </button>
+                        <button
+                            onClick={toggleDayNight}
+                            className={`px-4 py-2 rounded text-black cursor-pointer`}
+                        >
+                            {isDay ? <MdDarkMode />
+                                : <MdLightMode />
                             }
-                        }}
-                        id="bomb-button"
-                        className={`p-2 transition-all duration-300 transform rounded-full ${currentBombMode ? 'bg-black p-2 text-white' : 'hover:scale-105'
-                            }`}
-                        aria-label="Toggle Bomb Mode"
-                    >
-                        {currentBombMode ? <TbBombFilled /> : <TbBomb />}
-                    </button>
+                        </button>
 
-                    <button
-                        onClick={safeReset} // Use the safe reset function
-                        className="p-2 transition-all duration-300 transform hover:scale-105 focus:outline-none"
-                        aria-label="Reset Bomb Settings"
-                    >
-                        <RiResetLeftLine />
-                    </button>
-                    <button
-                        onClick={toggleDayNight}
-                        className={`px-4 py-2 rounded text-black`}
-                    >
-                        {isDay ? <MdDarkMode />
-                            : <MdLightMode />
-                        }
-                    </button>
-
-                    <button
-                        onClick={() => setIsMenuOpen((prev) => !prev)}
-                        className="p-2 transition-transform hover:scale-110 focus:outline-none"
-                        aria-label={isMenuOpen ? "Close Control Menu" : "Open Control Menu"}
-                    >
-                        <FaChevronDown />
-                    </button>
-                </div>
-                {isMenuOpen && (
-                    <div className="mt-2 w-64 p-4 bg-gray-900 text-white rounded-xs shadow-xl transition-all space-y-4 animate-fade-in-down">
-                        {/* Power adjustment slider */}
-                        <div className="flex items-center gap-2">
-                            <label htmlFor="power-slider" className="text-sm w-16">
-                                Power:
-                            </label>
-                            <input
-                                id="power-slider"
-                                type="range"
-                                min="50"
-                                max="1000"
-                                value={currentAdjustablePower}
-                                onChange={(e) => safeSetAdjustablePower(Number(e.target.value))} // Use the safe setter
-                                className="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer accent-cyan-500"
-                                aria-label={`Bomb Power: ${currentAdjustablePower}px`}
-                            />
-                            <span className="text-sm">{currentAdjustablePower}px</span>
-                        </div>
-
-                        {/* Radius adjustment slider */}
-                        <div className="flex items-center gap-2">
-                            <label htmlFor="area-slider" className="text-sm w-16">
-                                Area:
-                            </label>
-                            <input
-                                id="area-slider"
-                                type="range"
-                                min="10"
-                                max="300"
-                                value={currentAdjustableRadius}
-                                onChange={(e) => safeSetAdjustableRadius(Number(e.target.value))} // Use the safe setter
-                                className="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer accent-cyan-500"
-                                aria-label={`Bomb Radius: ${currentAdjustableRadius}px`}
-                            />
-                            <span className="text-sm">{currentAdjustableRadius}px</span>
-                        </div>
-
-                        {/* Rotation adjustment slider */}
-                        <div className="flex items-center gap-2">
-                            <label htmlFor="rotation-slider" className="text-sm w-16">
-                                Rotation:
-                            </label>
-                            <input
-                                id="rotation-slider"
-                                type="range"
-                                min="0"
-                                max="360"
-                                value={currentAdjustableRotation}
-                                onChange={(e) => safeSetAdjustableRotation(Number(e.target.value))} // Use the safe setter
-                                className="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer accent-cyan-500"
-                                aria-label={`Bomb Rotation: ${currentAdjustableRotation}°`}
-                            />
-                            <span className="text-sm">{currentAdjustableRotation}°</span>
-                        </div>
+                        <button
+                            onClick={() => setIsMenuOpen((prev) => !prev)}
+                            className="p-2 transition-transform hover:scale-110 focus:outline-none cursor-pointer"
+                            aria-label={isMenuOpen ? "Close Control Menu" : "Open Control Menu"}
+                        >
+                            <FaChevronDown />
+                        </button>
                     </div>
-                )}
+                    {isMenuOpen && (
+                        <div className="mt-2 p-4 bg-gray-900 text-white rounded-xs shadow-xl transition-all space-y-4 animate-fade-in-down">
+                            {/* Power adjustment slider */}
+                            <div className="flex items-center gap-2">
+                                <label htmlFor="power-slider" className="text-sm w-16">
+                                    Power:
+                                </label>
+                                <input
+                                    id="power-slider"
+                                    type="range"
+                                    min="50"
+                                    max="1000"
+                                    value={currentAdjustablePower}
+                                    onChange={(e) => safeSetAdjustablePower(Number(e.target.value))} // Use the safe setter
+                                    className="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer accent-cyan-500"
+                                    aria-label={`Bomb Power: ${currentAdjustablePower}px`}
+                                />
+                                <span className="text-sm">{currentAdjustablePower}px</span>
+                            </div>
+
+                            {/* Radius adjustment slider */}
+                            <div className="flex items-center gap-2">
+                                <label htmlFor="area-slider" className="text-sm w-16">
+                                    Area:
+                                </label>
+                                <input
+                                    id="area-slider"
+                                    type="range"
+                                    min="10"
+                                    max="300"
+                                    value={currentAdjustableRadius}
+                                    onChange={(e) => safeSetAdjustableRadius(Number(e.target.value))} // Use the safe setter
+                                    className="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer accent-cyan-500"
+                                    aria-label={`Bomb Radius: ${currentAdjustableRadius}px`}
+                                />
+                                <span className="text-sm">{currentAdjustableRadius}px</span>
+                            </div>
+
+                            {/* Rotation adjustment slider */}
+                            <div className="flex items-center gap-2">
+                                <label htmlFor="rotation-slider" className="text-sm w-16">
+                                    Rotation:
+                                </label>
+                                <input
+                                    id="rotation-slider"
+                                    type="range"
+                                    min="0"
+                                    max="360"
+                                    value={currentAdjustableRotation}
+                                    onChange={(e) => safeSetAdjustableRotation(Number(e.target.value))} // Use the safe setter
+                                    className="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer accent-cyan-500"
+                                    aria-label={`Bomb Rotation: ${currentAdjustableRotation}°`}
+                                />
+                                <span className="text-sm">{currentAdjustableRotation}°</span>
+                            </div>
+                        </div>
+                    )}
+                </div>
             </div>
 
             {/* Canvas - now with pointer-events-auto to allow clicks */}

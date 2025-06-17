@@ -1,8 +1,9 @@
-import React, { createContext, useContext, useState, useRef, useEffect, useCallback, ReactNode } from 'react';
+// src/component/RopeState.tsx (or RopeContext.tsx)
+
+import React, { createContext, useContext, useRef, ReactNode } from 'react';
 
 // =============================================================================
 // Helper Physics Classes (Simplified for demonstration, ideally from a library like Matter.js)
-// If you're using Matter.js, you'd import it and use its classes.
 // These are simple implementations for a basic Verlet rope.
 // =============================================================================
 
@@ -51,7 +52,7 @@ export class Point { // <--- ADD export
     }
 }
 
-export class Stick { // <--- ADD export (good practice if Rope relies on it)
+export class Stick { // <--- ADD export
     p1: Point;
     p2: Point;
     length: number;
@@ -123,17 +124,13 @@ export class Rope { // Already exported
     }
 }
 
-
 // =============================================================================
 // Context Definition
 // =============================================================================
 
 interface RopeContextType {
-    areAllShrunk: boolean;
-    toggleShrinkState: () => void;
-    // We export ropeRef, but components should generally not directly manipulate it.
-    // It's exposed here primarily for the RopeCanvas component to draw the rope.
-    ropeRef: React.MutableRefObject<Rope | null>; 
+    // areAllShrunk and toggleShrinkState are removed from here
+    ropeRef: React.MutableRefObject<Rope | null>;
 }
 
 const RopeContext = createContext<RopeContextType | undefined>(undefined);
@@ -143,21 +140,16 @@ interface RopeProviderProps {
 }
 
 export const RopeProvider: React.FC<RopeProviderProps> = ({ children }) => {
-    const [areAllShrunk, setAreAllShrunk] = useState(false);
+    // const [areAllShrunk, setAreAllShrunk] = useState(false); // REMOVED
     const ropeRef = useRef<Rope | null>(null); // This ref holds the actual rope instance
 
-    const toggleShrinkState = useCallback(() => {
-        setAreAllShrunk(prev => !prev);
-    }, []);
-
-    // You can also add more direct control methods if needed, e.g.:
-    // const setRopeInstance = useCallback((instance: Rope) => {
-    //     ropeRef.current = instance;
+    // const toggleShrinkState = useCallback(() => { // REMOVED
+    //     setAreAllShrunk(prev => !prev);
     // }, []);
 
     const contextValue: RopeContextType = {
-        areAllShrunk,
-        toggleShrinkState,
+        // areAllShrunk, // REMOVED
+        // toggleShrinkState, // REMOVED
         ropeRef,
     };
 
