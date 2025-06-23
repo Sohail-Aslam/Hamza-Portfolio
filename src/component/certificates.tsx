@@ -428,7 +428,7 @@ export default function AboutObjects() {
                                 style={spriteStyle}
                             />
                             {/* This is the div for each image */}
-                            <div className='absolute bottom-0 p-2 bg-white/70 backdrop-blur-sm rounded-b-lg w-full text-center'>
+                            <div className='trophy absolute bottom-0 p-2 bg-white/70 backdrop-blur-sm rounded-b-lg w-full text-center'>
                                 <p className="font-semibold text-gray-800 text-lg">
                                     {shape.heading}
                                 </p>

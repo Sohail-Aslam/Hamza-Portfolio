@@ -95,7 +95,7 @@ main {
 }
 
 /* Light/Dark mode button specific positioning */
-.mode-toggle-container {
+.mode-toggle-contaifner {
   margin-top: auto; /* Pushes the toggle to the bottom */
   margin-bottom: 2rem;
 }
@@ -319,6 +319,19 @@ body.dark-mode .side-menu-item:hover:not(.active) {
   max-width: 70%;
   transition: background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out, border-color 0.3s ease-in-out; /* Added border-color for transition */
   border: 1px solid rgba(255, 255, 255, 0.2); /* Light mode border */
+}
+
+@media (max-width:768px){
+  .section-container {
+    margin: 1.5rem auto;
+    max-width: 80%;
+  }
+}
+@media (max-width:453px){
+  .section-container {
+    margin: 1rem auto;
+    max-width: 85%;
+  }
 }
 
 body.dark-mode .section-container {

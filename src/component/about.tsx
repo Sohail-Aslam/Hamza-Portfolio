@@ -76,40 +76,21 @@ const about = () => {
       setBombPoint({ x: clickX, y: clickY });
       setHitElementsTransforms(prev => new Map([...prev, ...newTransforms]));
     };
-  
-    const getElementId = (prefix: string, index: number) => `${prefix}-${index}`;
-  const { triggerExplosion, firePoints } = useBomb();
 
-  const handleClick = (e: React.MouseEvent) => {
-    triggerExplosion(e.clientX, e.clientY);
-  };
-    
   return (
-  <div
+    <div
       id="about"
-      className="text-center overflow-hidden flex flex-col items-center justify-center p-10 section-container min-h-screen select-none"
+      className="text-center overflow-x-hidden overflow-y-auto flex flex-col items-center justify-start p-10 section-container min-h-screen"
       onClick={calculateHitElements}
       style={{ userSelect: 'none' }}
     >
+  
       <h1 className="text-3xl font-bold text-cyan-500 mb-6 w-full text-center">
 About me      </h1>
 
-      <div className="w-full flex-grow flex justify-center items-center mt-30 ">
+      <div className="w-full flex-grow h-full flex justify-center items-center mt-30 ">
         <AboutObjects />
       </div>
-      {firePoints.map((point) => (
-        <img
-          key={point.id}
-          src={`/assets/fire.gif?id=${point.id}`} // force reload
-          className="absolute pointer-events-none w-32 h-32"
-          style={{
-            top: point.y - 64,
-            left: point.x - 64,
-            zIndex: 9999,
-          }}
-        />
-      ))}
-
     </div>
   )
 }

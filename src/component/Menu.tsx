@@ -381,7 +381,7 @@ const App: React.FC = () => {
         // Resize handler
         const handleResize = () => {
             if (!canvas) return;
-            canvas.width = window.innerWidth * .15;
+            canvas.width = window.innerWidth * .25;
             canvas.height = window.innerHeight;
             if (!ropeRef.current) {
                 initializeRope();
@@ -500,8 +500,8 @@ const App: React.FC = () => {
         <div className="relative w-full h-66 font-sans">
             {/* Menu Button */}
             <div className="z-[1150] fixed top-0 left-0">
-                <div className="w-full  shadow-lg p-5">
-                    <div className="w-full flex gap-16  text-2xl">
+                <div className="w-full  shadow-lg p-5 backdrop-blur-xs">
+                    <div className="w-full flex gap-7 sm:gap-16 text-2xl">
                         <div
                             ref={menuRef}
                             onClick={toggleWrap}

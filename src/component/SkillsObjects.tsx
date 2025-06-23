@@ -4,13 +4,11 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import spriteImg from '../assets/skillsv2v1.webp'; // Your skills sprite image
 import spriteData from '../assets/skillsv2v1.json'; // Your skills sprite data
 import { useBomb } from '../component/BombContext';
-// import { useRopeContext } from '../component/RopeState'; // REMOVE this import
 import RopeCanvas from './RopeCanvs'; // Ensure this is correctly named RopeCanvas, not RopeCanvs
 
 export default function AboutObjects() {
     const { elementRefs, hitElementsTransforms } = useBomb();
-    const containerRef = useRef<HTMLDivElement>(null);
-    // REMOVE: const { areAllShrunk } = useRopeContext();
+    const containerRef = useRef<HTMLHTMLDivElement>(null);
     const [areAllShrunk, setAreAllShrunk] = useState(false); // NEW: Local state for shrinking
 
     interface Frame {
@@ -120,15 +118,17 @@ export default function AboutObjects() {
         indexedShapes.sort((a, b) => a.originalIndex - b.originalIndex);
 
         indexedShapes.forEach(({ shape, originalIndex }) => {
-            const id = `skills-shape-${originalIndex}`; // Corrected ID prefix for skills page
-            const colSpan = shape.colSpan || 1;
+            const id = `skills-shape-${originalIndex}`;
+            // Ensure colSpan doesn't exceed the number of available columns
+            const actualColSpan = Math.min(shape.colSpan || 1, cols);
 
             let bestColumnIndex = -1;
             let minHeight = Infinity;
 
-            for (let i = 0; i <= cols - colSpan; i++) {
+            // Find the best starting column for the item
+            for (let i = 0; i <= cols - actualColSpan; i++) {
                 let maxBlockHeightInCurrentSpot = 0;
-                for (let j = 0; j < colSpan; j++) {
+                for (let j = 0; j < actualColSpan; j++) {
                     maxBlockHeightInCurrentSpot = Math.max(maxBlockHeightInCurrentSpot, columnHeights[i + j]);
                 }
 
@@ -138,18 +138,20 @@ export default function AboutObjects() {
                 }
             }
 
+            // Fallback if no suitable column found (shouldn't happen with correct logic)
             if (bestColumnIndex === -1) {
                 bestColumnIndex = 0;
             }
 
             const currentLeft = columnXPositions[bestColumnIndex];
-            const currentTop = minHeight; // Use minHeight here for proper flow
+            const currentTop = minHeight;
 
             positions.set(id, { left: currentLeft, top: currentTop });
 
             const itemRenderedHeight = parsePixelValue(shape.shrunkHeight);
 
-            for (let i = 0; i < colSpan; i++) {
+            // Update column heights for all columns spanned by the current item
+            for (let i = 0; i < actualColSpan; i++) {
                 columnHeights[bestColumnIndex + i] = currentTop + itemRenderedHeight + rowGap;
             }
         });
@@ -203,7 +205,7 @@ export default function AboutObjects() {
     }, []);
 
     return (
-        <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden m-10">
+        <div className="absolute inset-0 z-0 pointer-events-none m-10">
             {/* Pass the local state and the local toggle callback to RopeCanvas */}
             <RopeCanvas onRopePulled={handleRopePulled} isShrunk={areAllShrunk} />
 
@@ -231,11 +233,12 @@ export default function AboutObjects() {
                         ? `${targetShrunkPosition.top}px`
                         : shape.expandedTop;
 
-                    const { baseItemWidth, columnGap } = getGridParameters(currentContainerWidth);
-                    const colSpan = shape.colSpan || 1;
+                    const { baseItemWidth, columnGap, cols } = getGridParameters(currentContainerWidth);
+                    // Ensure colSpan respects the current number of columns
+                    const actualColSpan = Math.min(shape.colSpan || 1, cols);
 
                     const currentWidth = areAllShrunk
-                        ? `${(baseItemWidth * colSpan) + (columnGap * (colSpan - 1))}px`
+                        ? `${(baseItemWidth * actualColSpan) + (columnGap * (actualColSpan - 1))}px`
                         : `${frame.w * shape.scale}px`;
 
                     const currentHeight = areAllShrunk
@@ -278,7 +281,7 @@ export default function AboutObjects() {
                             transition: 'opacity 0s ease-out',
                         };
 
-                    const infoBoxClasses = `absolute border-3 border-solid rounded-xl bg-white flex flex-col justify-start items-start p-2 gap-1 overflow-hidden`;
+                    const infoBoxClasses = `absolute border-3 border-solid rounded-xl bg-white flex flex-col justify-start items-start p-2 gap-1 overflow-hidden transition-all duration-700 ease-in-out ${areAllShrunk ? 'overflow-y-auto' : ''}`;
 
                     return (
                         <div
@@ -329,6 +332,7 @@ export default function AboutObjects() {
                                     style={{
                                         paddingLeft: areAllShrunk ? `${iconOffsetLeftShrunk + (frame.w * iconScaleShrunk) + 20}px` : '0px',
                                         paddingTop: areAllShrunk ? '5px' : '0px',
+                                        fontSize: currentContainerWidth < 600 ? '0.9rem' : '1.125rem'
                                     }}
                                 >
                                     {shape.heading.replace('.png', '').replace('.jpg', '')}
@@ -336,7 +340,8 @@ export default function AboutObjects() {
                                 <div
                                     className="text-sm text-gray-700 "
                                     style={{
-                                        paddingLeft: areAllShrunk ? `${iconOffsetLeftShrunk + (frame.w * iconScaleShrunk) + 10}px` : '0px'
+                                        paddingLeft: areAllShrunk ? `${iconOffsetLeftShrunk + (frame.w * iconScaleShrunk) + 10}px` : '0px',
+                                        fontSize: currentContainerWidth < 600 ? '0.75rem' : '0.875rem'
                                     }}
                                 >
                                     {shape.shrunkText || `More details about ${shape.name.replace('.png', '').replace('.jpg', '')} can be found here.`}

@@ -4,12 +4,11 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import spriteImg from '../assets/aboutv3.webp';
 import spriteData from '../assets/aboutv3.json';
 import { useBomb } from '../component/BombContext';
-// import { useRopeContext } from '../component/RopeState'; // No longer needed for `areAllShrunk`
 import RopeCanvas from './RopeCanvs'
+
 export default function AboutObjects() {
     const { elementRefs, hitElementsTransforms } = useBomb();
-    // const { areAllShrunk } = useRopeContext(); // REMOVED - now local state
-    const [areAllShrunk, setAreAllShrunk] = useState(false); // NEW: Local state for shrink
+    const [areAllShrunk, setAreAllShrunk] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
 
     interface Frame {
@@ -75,7 +74,7 @@ export default function AboutObjects() {
             paddingTop = 60;
             paddingLeft = 10;
             paddingRight = 10;
-        } else if (width < 900) {
+        } else if (width < 989) { // Adjusted breakpoint for clarity
             cols = 2;
             columnGap = 20;
             rowGap = 20;
@@ -117,15 +116,16 @@ export default function AboutObjects() {
 
         indexedShapes.forEach(({ shape, originalIndex }) => {
             const id = `about-shape-${originalIndex}`;
-            const colSpan = shape.colSpan || 1;
+            // Ensure colSpan doesn't exceed the number of available columns
+            const actualColSpan = Math.min(shape.colSpan || 1, cols);
 
             let bestColumnIndex = -1;
             let minHeight = Infinity;
 
-            for (let i = 0; i <= cols - colSpan; i++) {
+            // Find the best starting column for the item
+            for (let i = 0; i <= cols - actualColSpan; i++) {
                 let maxBlockHeightInCurrentSpot = 0;
-                for (let j = 0; j < colSpan; j++) {
-
+                for (let j = 0; j < actualColSpan; j++) {
                     maxBlockHeightInCurrentSpot = Math.max(maxBlockHeightInCurrentSpot, columnHeights[i + j]);
                 }
 
@@ -135,18 +135,20 @@ export default function AboutObjects() {
                 }
             }
 
+            // Fallback if no suitable column found (shouldn't happen with correct logic)
             if (bestColumnIndex === -1) {
                 bestColumnIndex = 0;
             }
 
             const currentLeft = columnXPositions[bestColumnIndex];
-            const currentTop = minHeight; // Use minHeight directly here
+            const currentTop = minHeight;
 
             positions.set(id, { left: currentLeft, top: currentTop });
 
             const itemRenderedHeight = parsePixelValue(shape.shrunkHeight);
 
-            for (let i = 0; i < colSpan; i++) {
+            // Update column heights for all columns spanned by the current item
+            for (let i = 0; i < actualColSpan; i++) {
                 columnHeights[bestColumnIndex + i] = currentTop + itemRenderedHeight + rowGap;
             }
         });
@@ -160,13 +162,11 @@ export default function AboutObjects() {
         { positions: new Map(), maxContainerHeight: 0, paddingTop: 0 }
     );
 
-    // This useEffect will now *only* set up the resize listener.
-    // The initial measurement and layout calculation will happen in a separate effect.
     useEffect(() => {
         const handleResize = () => {
             if (containerRef.current) {
                 const newWidth = containerRef.current.clientWidth;
-                setCurrentContainerWidth(newWidth); // Simplified
+                setCurrentContainerWidth(newWidth);
             }
         };
 
@@ -180,14 +180,9 @@ export default function AboutObjects() {
         if (currentContainerWidth > 0) {
             const newLayoutData = calculateShrunkPositions(currentContainerWidth);
             setShrunkLayoutData(prevLayoutData => {
-                // More robust check to avoid unnecessary updates if layout data is the same
                 if (
                     prevLayoutData.maxContainerHeight === newLayoutData.maxContainerHeight &&
                     prevLayoutData.paddingTop === newLayoutData.paddingTop &&
-                    // Also compare positions map (shallow comparison for simplicity, or deep if needed)
-                    // For a Map, comparing references is enough if you always create a new Map for changes.
-                    // If content changes but map object is same, you need a deep comparison or force new map.
-                    // Assuming calculateShrunkPositions returns a new Map if content changes.
                     prevLayoutData.positions.size === newLayoutData.positions.size &&
                     Array.from(prevLayoutData.positions.keys()).every(key => {
                         const p1 = prevLayoutData.positions.get(key);
@@ -202,25 +197,13 @@ export default function AboutObjects() {
         }
     }, [currentContainerWidth, calculateShrunkPositions]);
 
-    // NEW: Callback for RopeCanvas to toggle local shrink state
     const handleRopePulled = useCallback(() => {
         setAreAllShrunk(prev => !prev);
     }, []);
 
     return (
-        <div className="absolute inset-0 pointer-events-auto overflow-hidden m-10">
-            {/* You can uncomment this button if you want another way to toggle,
-                but it will now toggle the local state. */}
-            {/* <button
-                onClick={() => setAreAllShrunk(prev => !prev)}
-                className="absolute top-4 left-4 z-10 px-4 py-2 bg-blue-500 text-white rounded cursor-pointer pointer-events-auto rounded-md"
-            >
-                {areAllShrunk ? 'Expand All Objects' : 'Shrink All Objects'}
-            </button> */}
-
-            {/* Pass the local state and the local toggle callback to RopeCanvas */}
+        <div className="absolute inset-0 pointer-events-auto m-10">
             <RopeCanvas onRopePulled={handleRopePulled} isShrunk={areAllShrunk} />
-
 
             <div
                 ref={containerRef}
@@ -245,11 +228,11 @@ export default function AboutObjects() {
                         ? `${targetShrunkPosition.top}px`
                         : shape.expandedTop;
 
-                    const { baseItemWidth, columnGap } = getGridParameters(currentContainerWidth);
-                    const colSpan = shape.colSpan || 1;
+                    const { baseItemWidth, columnGap, cols } = getGridParameters(currentContainerWidth);
+                    const actualColSpan = Math.min(shape.colSpan || 1, cols); // Ensure colSpan respects current cols
 
                     const currentWidth = areAllShrunk
-                        ? `${(baseItemWidth * colSpan) + (columnGap * (colSpan - 1))}px`
+                        ? `${(baseItemWidth * actualColSpan) + (columnGap * (actualColSpan - 1))}px`
                         : `${frame.w * shape.scale}px`;
 
                     const currentHeight = areAllShrunk
@@ -292,12 +275,11 @@ export default function AboutObjects() {
                             transition: 'opacity 0s ease-out',
                         };
 
-                    const infoBoxClasses = `absolute border-3 border-solid rounded-xl bg-white flex flex-col justify-start items-start p-2 gap-1 overflow-hidden`;
+                    const infoBoxClasses = `absolute border-3 border-solid rounded-xl bg-white flex flex-col justify-start items-start p-2 gap-1 overflow-hidden transition-all duration-700 ease-in-out ${areAllShrunk ? 'overflow-y-auto' : ''}`;
 
                     return (
                         <div
                             key={id}
-
                             ref={(el: HTMLDivElement | null) => {
                                 if (el) elementRefs.current[id] = el;
                             }}
@@ -344,7 +326,7 @@ export default function AboutObjects() {
                                     style={{
                                         paddingLeft: areAllShrunk ? `${iconOffsetLeftShrunk + (frame.w * iconScaleShrunk) + 20}px` : '0px',
                                         paddingTop: areAllShrunk ? '5px' : '0px',
-
+                                        fontSize: currentContainerWidth < 600 ? '0.9rem' : '1.125rem'
                                     }}
                                 >
                                     {shape.heading.replace('.png', '').replace('.jpg', '')}
@@ -352,7 +334,8 @@ export default function AboutObjects() {
                                 <div
                                     className="text-sm text-gray-700 "
                                     style={{
-                                        paddingLeft: areAllShrunk ? `${iconOffsetLeftShrunk + (frame.w * iconScaleShrunk) + 10}px` : '0px'
+                                        paddingLeft: areAllShrunk ? `${iconOffsetLeftShrunk + (frame.w * iconScaleShrunk) + 10}px` : '0px',
+                                        fontSize: currentContainerWidth < 600 ? '0.75rem' : '0.875rem'
                                     }}
                                 >
                                     {shape.shrunkText || `More details about ${shape.name.replace('.png', '').replace('.jpg', '')} can be found here.`}
@@ -362,7 +345,6 @@ export default function AboutObjects() {
                     );
                 })}
             </div>
-
         </div>
     );
 }

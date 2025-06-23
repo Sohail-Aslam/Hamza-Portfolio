@@ -6,7 +6,7 @@ import { GoMoveToEnd } from "react-icons/go";
 import { useBomb } from '../component/BombContext';
 import { useTheme } from '../component/ThemeContext'; // Adjust path if needed
 import useSound from 'use-sound';
-
+import '../App.css'
 const socialIcons = [
   {
     id: 'icon-github',
@@ -187,16 +187,17 @@ const Header = () => {
 
   return (
     <div id="home"
-      className="select-none font-inter overflow-hidden min-h-screen flex flex-col justify-center items-center text-center z-50 "
+      className={`select-none font-inter overflow-hidden min-h-screen flex flex-col justify-center items-center text-center z-50 ${currentBombMode ? 'cursor-crosshair' : ''
+        }`}
       onClick={calculateHitElements}
     >
 
-      <div className="flex flex-col-reverse items-center w-full section-container w-full py-10 bottom-15">
+      <div className="flex px-4 flex-col-reverse items-center w-full section-container w-full py-10 bottom-15">
         {/* Left content */}
         <div className="flex-1 flex flex-col gap-16 text-white">
           <div className="flex flex-col gap-8">
             <h1
-              className="mt-6 text-xl sm:text-2xl md:text-3xl lg:text-5xl font-bold leading-tight text-5xl font-extrabold text-blue-600 mb-6 leading-tight text-[#0ea5e9]"
+              className="mt-6 text-3xl sm:text-4xl md:text-5xl sm:px-10 lg:text-6xl font-bold leading-tight font-extrabold text-blue-600 mb-6 leading-tight text-[#0ea5e9]"
             >
               {"Hello, World! I am Umair Hamza.".split(' ').map((word, index) => {
                 const id = getElementId('heading', index);
@@ -269,7 +270,7 @@ const Header = () => {
             </span>
           </a>
 
-          <div className="flex gap-8 md:text-2xl lg:text-3xl  z-30">
+          <div className="flex gap-8 md:text-2xl text-2xl lg:text-3xl  z-30">
             {socialIcons.map((icon, index) => {
               const id = getElementId('social-icon', index);
               const IconComponent = icon.component;

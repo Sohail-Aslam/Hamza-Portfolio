@@ -181,7 +181,7 @@ const Achievement = () => {
     };
             
     return (
-        <div id='achivement' className="section-container overflow-hidden p-10 my-12 min-h-screen flex flex-col justify-center items-center text-center" onClick={calculateHitElements} >
+        <div id='achivement' className="section-container overflow-hidden p-0 sm:p-5 md:p-10 my-12 min-h-screen flex flex-col justify-center items-center text-center" onClick={calculateHitElements} >
             <div rel="noopener noreferrer"
             >
                 <h2 className="text-3xl font-bold text-cyan-500 mb-6">Achievements</h2>

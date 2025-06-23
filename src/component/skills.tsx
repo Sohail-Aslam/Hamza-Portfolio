@@ -76,20 +76,18 @@ const skills = () => {
       setBombPoint({ x: clickX, y: clickY });
       setHitElementsTransforms(prev => new Map([...prev, ...newTransforms]));
     };
-  
-    const getElementId = (prefix: string, index: number) => `${prefix}-${index}`;
-  
+    
   return (
   <div
       id="skills"
-      className="text-center overflow-hidden flex flex-col items-center justify-center p-10 section-container min-h-screen select-none"
+      className="text-center overflow-y-auto overflow-x-hidden flex flex-col items-center justify-center p-10 section-container min-h-screen select-none"
       onClick={calculateHitElements}
       style={{ userSelect: 'none' }}
     >
       <h1 className="text-3xl font-bold text-cyan-500 mb-6 w-full text-center">
 Skills      </h1>
 
-      <div className="w-full flex-grow flex justify-center items-center mt-30 ">
+      <div className="w-full flex-grow h-full flex justify-center items-center mt-30 ">
         <SkillsObjects />
       </div>
     </div>

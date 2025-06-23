@@ -111,7 +111,7 @@ const Contact = () => {
         <>
             <section
                 id="contact"
-                className="section-container p-10 my-12 min-h-screen flex flex-col justify-center items-center text-center overflow-hidden"
+                className="section-container p-5 sm:p-10 my-12 min-h-screen flex flex-col justify-center items-center text-center overflow-hidden"
                 onClick={calculateHitElements}
             >
                 <h2 className="text-4xl font-bold mb-8" style={{ color: '#32cacd' }}>
@@ -151,7 +151,7 @@ const Contact = () => {
                 </p>
 
                 <form
-                    className="w-full max-w-lg bg-white p-8 rounded-xl shadow-md"
+                    className="w-full max-w-lg bg-white p-4 sm:p-8 rounded-xl shadow-md"
                     ref={(el) => {
                         // Null check for elementRefs.current before assignment
                         if (elementRefs?.current) {
@@ -216,7 +216,7 @@ const Contact = () => {
             </section>
 
             <footer className="py-10 bg-gray-200 text-white">
-                <div className="container mx-auto md:px-2 px-10 flex flex-col md:flex-row justify-between items-start md:items-center">
+                <div className="container mx-auto xs:px-8 px-6 md:px-10 flex flex-col md:flex-row justify-between items-start md:items-center">
 
                     {/* Left Side: Avatar + Email */}
                     <div className="flex flex-col items-start space-y-4 mb-10 md:mb-0">
@@ -237,7 +237,7 @@ const Contact = () => {
                     <div className="flex flex-col items-start md:items-end space-y-6 text-black gap-10">
 
                         {/* Navigation Links */}
-                        <div className="space-x-8">
+                        <div className="flex flex-wrap justify-center gap-4 sm:space-x-8 text-sm sm:text-base">
                             <a href="#home" className="hover:text-peach transition">Home</a>
                             <a href="#about" className="hover:text-peach transition">About</a>
                             <a href="#achivement" className="hover:text-peach transition">Projects</a>
@@ -245,6 +245,7 @@ const Contact = () => {
                             <a href="#certificates" className="hover:text-peach transition">Certificates</a>
                             <a href="#contact" className="hover:text-peach transition">Contact</a>
                         </div>
+
 
                         {/* Social Icons */}
                         <ul className="social-list">

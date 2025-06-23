@@ -1,7 +1,7 @@
 // src/component/RopeCanvas.tsx
 
 import React, { useRef, useEffect, useCallback, useState } from 'react';
-import { useRopeContext, Rope, Vector, Point } from '../component/RopeState'; // Import RopeState as RopeState, not Rope
+import { useRopeContext, Rope, Vector } from '../component/RopeState'; // Import RopeState as RopeState, not Rope
 
 interface RopeCanvasProps {
     // New prop: a callback function to notify the parent about the pull action
