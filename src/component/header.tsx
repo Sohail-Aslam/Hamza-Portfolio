@@ -5,7 +5,8 @@ import { IoMdMail } from "react-icons/io";
 import { GoMoveToEnd } from "react-icons/go";
 import { useBomb } from '../Context/BombContext';
 import { useTheme } from '../Context/ThemeContext'; // Adjust path if needed
-
+import avatar from '../assets/avatar/avatar2.png'
+import bomb from '../assets/bomb/fire.gif'
 import '../App.css'
 const socialIcons = [
   {
@@ -176,7 +177,7 @@ const Header = () => {
         {/* Right image */}
         <div className="flex justify-center md:justify-end items-center md:items-start mt-8 md:mt-0">
           <img
-            src="src/assets/avatar/avatar2.png"
+            src={avatar}
             alt="avatar"
             className="w-48 h-48 md:w-64 md:h-64 rounded-full object-cover shadow-lg"
           />
@@ -185,7 +186,7 @@ const Header = () => {
       {firePoints.map((point) => (
         <img
           key={point.id}
-          src={`src/assets/bomb/fire.gif?id=${point.id}`} // 👈 trick: force reload
+          src={`${bomb}?id=${point.id}`} // 👈 trick: force reload
           alt="Explosion"
           className="pointer-events-none absolute w-32 h-32"
           style={{
