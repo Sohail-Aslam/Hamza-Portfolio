@@ -3,8 +3,8 @@ import { FaGithub, FaTwitter, FaCodepen } from "react-icons/fa";
 import { FaLinkedin } from "react-icons/fa6";
 import { IoMdMail } from "react-icons/io";
 import { GoMoveToEnd } from "react-icons/go";
-import { useBomb } from '../component/BombContext';
-import { useTheme } from '../component/ThemeContext'; // Adjust path if needed
+import { useBomb } from '../Context/BombContext';
+import { useTheme } from '../Context/ThemeContext'; // Adjust path if needed
 import useSound from 'use-sound';
 import '../App.css'
 const socialIcons = [
@@ -57,7 +57,7 @@ const parseTransform = (transformString: string) => {
 
 const Header = () => {
   const [playBombSound] = useSound('src/assets/bomb.mp3'); // adjust path as needed
-  const [bombTriggered, setBombTriggered] = React.useState(false);
+  const [setBombTriggered] = React.useState(false);
   const [firePoints, setFirePoints] = useState<{ x: number; y: number; id: string }[]>([]);
 
   const {
@@ -70,7 +70,7 @@ const Header = () => {
     setHitElementsTransforms,
     elementRefs,
   } = useBomb();
-  const { isDay, toggleDayNight } = useTheme();
+  const { isDay } = useTheme();
   useEffect(() => {
     if (!isDay) { // If it's not day, it's night (dark mode)
       document.body.classList.add('dark-mode');
@@ -130,7 +130,7 @@ const Header = () => {
     try {
       playBombSound(); // Just trigger, no await or .then
       console.log("Sound trigger function called");
-      setBombTriggered(true);
+      setBombTriggered;
     } catch (error) {
       console.error("Error while playing sound:", error);
     }
@@ -177,13 +177,7 @@ const Header = () => {
     setBombPoint({ x: clickX, y: clickY });
     setHitElementsTransforms(prev => new Map([...prev, ...newTransforms]));
   };
-  const imageList = [
-    'src/assets/image1 (1).png',
-    'src/assets/image2 (2).png',
-    'src/assets/image3 (3).png',
-    'src/assets/image4 (4).png',
-    'src/assets/image5 (5).png',
-  ];
+
 
   return (
     <div id="home"
@@ -300,7 +294,7 @@ const Header = () => {
         {/* Right image */}
         <div className="flex justify-center md:justify-end items-center md:items-start mt-8 md:mt-0">
           <img
-            src="src/assets/avatar2.png"
+            src="src/assets/avatar/avatar2.png"
             alt="avatar"
             className="w-48 h-48 md:w-64 md:h-64 rounded-full object-cover shadow-lg"
           />
@@ -309,7 +303,7 @@ const Header = () => {
       {firePoints.map((point) => (
         <img
           key={point.id}
-          src={`src/assets/fire.gif?id=${point.id}`} // 👈 trick: force reload
+          src={`src/assets/bomb/fire.gif?id=${point.id}`} // 👈 trick: force reload
           alt="Explosion"
           className="pointer-events-none absolute w-32 h-32"
           style={{

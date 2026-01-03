@@ -1,14 +1,14 @@
 // src/pages/AboutObjects.tsx (This is your Skills page)
 
 import { useState, useRef, useEffect, useCallback } from 'react';
-import spriteImg from '../assets/skillsv2v1.webp'; // Your skills sprite image
-import spriteData from '../assets/skillsv2v1.json'; // Your skills sprite data
-import { useBomb } from '../component/BombContext';
-import RopeCanvas from './RopeCanvs'; // Ensure this is correctly named RopeCanvas, not RopeCanvs
+import spriteImg from '../../assets/spritesheets/skillsv2v1.webp'; // Your skills sprite image
+import spriteData from '../../assets/spritesheets/skillsv2v1.json'; // Your skills sprite data
+import { useBomb } from '../../Context/BombContext';
+import RopeCanvas from '../RopeCanvs'; // Ensure this is correctly named RopeCanvas, not RopeCanvs
 
 export default function AboutObjects() {
     const { elementRefs, hitElementsTransforms } = useBomb();
-    const containerRef = useRef<HTMLHTMLDivElement>(null);
+    const containerRef = useRef<HTMLDivElement>(null);
     const [areAllShrunk, setAreAllShrunk] = useState(false); // NEW: Local state for shrinking
 
     interface Frame {

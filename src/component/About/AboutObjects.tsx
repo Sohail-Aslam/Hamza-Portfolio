@@ -1,10 +1,10 @@
 // src/pages/AboutObjects.tsx
 
 import { useState, useRef, useEffect, useCallback } from 'react';
-import spriteImg from '../assets/aboutv3.webp';
-import spriteData from '../assets/aboutv3.json';
-import { useBomb } from '../component/BombContext';
-import RopeCanvas from './RopeCanvs'
+import spriteImg from '../../assets/spritesheets/aboutv3.webp';
+import spriteData from '../../assets/spritesheets/aboutv3.json'
+import { useBomb } from '../../Context/BombContext'
+import RopeCanvas from '../RopeCanvs';
 
 export default function AboutObjects() {
     const { elementRefs, hitElementsTransforms } = useBomb();

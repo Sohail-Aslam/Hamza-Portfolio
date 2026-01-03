@@ -8,7 +8,8 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  z-index: -1; /* Send canvas to the background */
+  z-index: -1;
+  /* Send canvas to the background */
 }
 
 /*
@@ -28,17 +29,20 @@ html {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #a7d9f2; /* Light blue */
+  background: #a7d9f2;
+  /* Light blue */
   border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #87c3e2; /* Slightly darker blue on hover */
+  background: #87c3e2;
+  /* Slightly darker blue on hover */
 }
 
 /* Side menu specific styles */
 .side-menu {
-  width: 80px; /* Fixed width for the menu */
+  width: 80px;
+  /* Fixed width for the menu */
   position: fixed;
   left: 0;
   top: 0;
@@ -54,28 +58,38 @@ html {
   z-index: 20;
   border-top-right-radius: 1.5rem;
   border-bottom-right-radius: 1.5rem;
-  transition: background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out; /* Smooth transition for mode change */
+  transition: background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  /* Smooth transition for mode change */
 }
 
 .side-menu-item {
-  width: 56px; /* Size for the circular items */
+  width: 56px;
+  /* Size for the circular items */
   height: 56px;
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 1.5rem; /* Space between items */
-  border-radius: 9999px; /* Full circle */
-  background-color: #e0f2f7; /* Light blue background for items */
-  color: #4a5568; /* Darker text/icon color */
-  font-size: 1.5rem; /* For icons/text */
+  margin-bottom: 1.5rem;
+  /* Space between items */
+  border-radius: 9999px;
+  /* Full circle */
+  background-color: #e0f2f7;
+  /* Light blue background for items */
+  color: #4a5568;
+  /* Darker text/icon color */
+  font-size: 1.5rem;
+  /* For icons/text */
   cursor: pointer;
   transition: all 0.3s ease-in-out;
 }
 
 .side-menu-item.active {
-  transform: scale(2.05) translateX(20px); /* Scale up */
-  border: 5px solid rgba(255, 255, 255, 0.8); /* Blue border */
-  background-color: #d1e7f0; /* Slightly darker background when active */
+  transform: scale(2.05) translateX(20px);
+  /* Scale up */
+  border: 5px solid rgba(255, 255, 255, 0.8);
+  /* Blue border */
+  background-color: #d1e7f0;
+  /* Slightly darker background when active */
 }
 
 body.dark-mode .side-menu-item {
@@ -91,12 +105,14 @@ body.dark-mode .side-menu-item {
 
 /* Adjust main content to make space for the side menu */
 main {
-  margin-left: 100px; /* Width of side menu + some padding */
+  margin-left: 100px;
+  /* Width of side menu + some padding */
 }
 
 /* Light/Dark mode button specific positioning */
 .mode-toggle-contaifner {
-  margin-top: auto; /* Pushes the toggle to the bottom */
+  margin-top: auto;
+  /* Pushes the toggle to the bottom */
   margin-bottom: 2rem;
 }
 
@@ -108,17 +124,21 @@ main {
   /* Initial glow effect (light mode) */
   box-shadow: 0 0 10px rgba(255, 255, 0, 0.5), 0 0 20px rgba(255, 255, 0, 0.3);
   transition: all 0.3s ease-in-out;
-  background-color: #ffeb3b; /* Yellow for sun */
+  background-color: #ffeb3b;
+  /* Yellow for sun */
 }
 
 .mode-toggle-btn.dark-mode {
   box-shadow: 0 0 10px rgba(0, 255, 255, 0.5), 0 0 20px rgba(0, 255, 255, 0.3);
-  background-color: #2a3b4c; /* Dark blue for moon */
-  color: #e0f7fa; /* Light color for moon icon */
+  background-color: #2a3b4c;
+  /* Dark blue for moon */
+  color: #e0f7fa;
+  /* Light color for moon icon */
 }
 
 /* Bounce effect keyframes */
 @keyframes bounce {
+
   0%,
   20%,
   50%,
@@ -266,9 +286,15 @@ body.dark-mode .side-menu-item:hover:not(.active) {
 }
 
 @keyframes bounce-sm {
+
   0%,
-  100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
 }
 
 .animate-bounce-sm {
@@ -276,11 +302,25 @@ body.dark-mode .side-menu-item:hover:not(.active) {
 }
 
 @keyframes shake {
-  0% { transform: rotate(0deg); }
-  25% { transform: rotate(5deg); }
-  50% { transform: rotate(-5deg); }
-  75% { transform: rotate(4deg); }
-  100% { transform: rotate(0deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+
+  25% {
+    transform: rotate(5deg);
+  }
+
+  50% {
+    transform: rotate(-5deg);
+  }
+
+  75% {
+    transform: rotate(4deg);
+  }
+
+  100% {
+    transform: rotate(0deg);
+  }
 }
 
 .shake {
@@ -312,22 +352,26 @@ body.dark-mode .side-menu-item:hover:not(.active) {
   z-index: 1;
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(5px);
-  background-color: rgba(255, 255, 255, 0.6); /* Semi-transparent white background */
+  background-color: rgba(255, 255, 255, 0.6);
+  /* Semi-transparent white background */
   border-radius: 1.5rem;
   box-shadow: 0 10px 20px rgba(27, 27, 27, 0.05);
   margin: 2rem auto;
   max-width: 70%;
-  transition: background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out, border-color 0.3s ease-in-out; /* Added border-color for transition */
-  border: 1px solid rgba(255, 255, 255, 0.2); /* Light mode border */
+  transition: background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out, border-color 0.3s ease-in-out;
+  /* Added border-color for transition */
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  /* Light mode border */
 }
 
-@media (max-width:768px){
+@media (max-width:768px) {
   .section-container {
     margin: 1.5rem auto;
     max-width: 80%;
   }
 }
-@media (max-width:453px){
+
+@media (max-width:453px) {
   .section-container {
     margin: 1rem auto;
     max-width: 85%;
@@ -335,9 +379,12 @@ body.dark-mode .side-menu-item:hover:not(.active) {
 }
 
 body.dark-mode .section-container {
-  background-color: rgba(44, 44, 44, 0.6); /* Semi-transparent dark background */
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3); /* Stronger shadow for dark mode */
-  border: 1px solid rgba(0, 0, 0, 0.4); /* Dark mode border */
+  background-color: rgba(44, 44, 44, 0.6);
+  /* Semi-transparent dark background */
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+  /* Stronger shadow for dark mode */
+  border: 1px solid rgba(0, 0, 0, 0.4);
+  /* Dark mode border */
 }
 
 
@@ -345,8 +392,10 @@ body.dark-mode .section-container {
 
 /* You might want to define global text and background colors for your entire app */
 body {
-  background-color: #f0f2f5; /* Light mode background */
-  color: #333; /* Light mode text */
+  background-color: #f0f2f5;
+  /* Light mode background */
+  color: #333;
+  /* Light mode text */
   transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
 }
 
@@ -354,28 +403,36 @@ body {
 
 /* Apply this to your h1, h3, a (link), and social icon text */
 
-body.dark-mode .text-black { /* This will target elements with `text-black` in dark mode */
-  color: #e0e0e0; /* Or a specific dark mode text color */
+body.dark-mode .text-black {
+  /* This will target elements with `text-black` in dark mode */
+  color: #e0e0e0;
+  /* Or a specific dark mode text color */
 }
 
-body.dark-mode .text-blue-600 { /* Adjust for the "Hello World" heading */
-  color: #90caf9; /* A lighter blue for dark mode */
+body.dark-mode .text-blue-600 {
+  /* Adjust for the "Hello World" heading */
+  color: #90caf9;
+  /* A lighter blue for dark mode */
 }
 
-body.dark-mode { /* Adjust for the `text-[#0ea5e9]` class */
+body.dark-mode {
+  /* Adjust for the `text-[#0ea5e9]` class */
   color: #90caf9;
   background-color: #000;
 }
 
 body.dark-mode footer {
-  background-color: rgba(44, 44, 44, 0.6); /* Semi-transparent dark background */
+  background-color: rgba(44, 44, 44, 0.6);
+  /* Semi-transparent dark background */
 }
 
 /* Adjust the contact button */
 body.dark-mode .group-hover\:text-white {
-  color: #e0e0e0; /* Ensure text is visible in dark mode */
+  color: #e0e0e0;
+  /* Ensure text is visible in dark mode */
 }
 
 body.dark-mode .hover\:text-\[\#32cacd\]:hover {
-  color: #78d2d6; /* A slightly different hover color for dark mode social icons */
+  color: #78d2d6;
+  /* A slightly different hover color for dark mode social icons */
 }

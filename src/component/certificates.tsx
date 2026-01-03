@@ -1,7 +1,8 @@
-import React, { useState, ChangeEvent, useCallback, useRef, useEffect } from 'react';
-import spriteImg from '../assets/certificatev1.webp';
-import spriteData from '../assets/certificatev1.json';
-import { useBomb } from '../component/BombContext';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
+import type { ChangeEvent } from 'react';
+import spriteImg from '../assets/spritesheets/certificatev1.webp';
+import spriteData from '../assets/spritesheets/certificatev1.json';
+import { useBomb } from '../Context/BombContext';
 
 // --- Global Styles for the Custom Checkbox (from previous corrected response) ---
 const globalCheckboxStyles = `
@@ -292,7 +293,7 @@ export default function AboutObjects() {
     const getGridShapeStyles = useCallback((shape: CustomShape, frame: Frame, transformFromBomb: string | undefined) => {
         const { itemSize } = layoutData;
 
-        const baseContainerStyle = {
+        const baseContainerStyle: React.CSSProperties = {
             width: `${itemSize}px`,
             height: `${itemSize}px`,
             display: 'flex',
@@ -303,7 +304,7 @@ export default function AboutObjects() {
             cursor: 'pointer',
         };
 
-        const baseSpriteStyle = {
+        const baseSpriteStyle: React.CSSProperties = {
             width: `${frame.w}px`,
             height: `${frame.h}px`,
             transformOrigin: 'center center',
@@ -325,7 +326,7 @@ export default function AboutObjects() {
                     transform: transformFromBomb,
                     opacity: 0,
                     pointerEvents: 'none',
-                },
+                } as React.CSSProperties,
                 sprite: baseSpriteStyle,
             };
         }
@@ -389,7 +390,7 @@ export default function AboutObjects() {
     return (
         <div className="section-container min-h-screen inset-0 pointer-events-auto overflow-hidden m-10">
             <h1 className="text-3xl font-bold text-cyan-500 mb-6 w-full text-center mt-10">
-             Certificates      </h1>
+                Certificates      </h1>
             <div
                 ref={containerRef}
                 className="relative mx-auto w-full max-w-[1200px] h-full"

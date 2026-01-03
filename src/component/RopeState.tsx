@@ -1,7 +1,7 @@
 // src/component/RopeState.tsx (or RopeContext.tsx)
 
-import React, { createContext, useContext, useRef, ReactNode } from 'react';
-
+import React, { createContext, useContext, useRef } from 'react';
+import type { ReactNode } from 'react';
 // =============================================================================
 // Helper Physics Classes (Simplified for demonstration, ideally from a library like Matter.js)
 // These are simple implementations for a basic Verlet rope.

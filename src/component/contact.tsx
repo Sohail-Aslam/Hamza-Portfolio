@@ -1,5 +1,5 @@
 import React from 'react';
-import { useBomb } from '../component/BombContext';
+import { useBomb } from '../Context/BombContext';
 import './socialicons.css'
 import { FaGithub, FaTwitter, FaCodepen } from "react-icons/fa";
 import { FaLinkedin } from "react-icons/fa6";
@@ -160,7 +160,7 @@ const Contact = () => {
                     }}
                     style={getStyle('contact-form')}
                 >
-                    {['name', 'email', 'message'].map((field, index) => (
+                    {['name', 'email', 'message'].map((field) => (
                         <div className="mb-6" key={field}>
                             {field === 'message' ? (
                                 <textarea
@@ -221,7 +221,7 @@ const Contact = () => {
                     {/* Left Side: Avatar + Email */}
                     <div className="flex flex-col items-start space-y-4 mb-10 md:mb-0">
                         <img
-                            src="src/assets/avatar.png"
+                            src="src/assets/avatar/avatar.png"
                             alt="Avatar"
                             className="w-24 h-24 rounded-full object-cover"
                         />

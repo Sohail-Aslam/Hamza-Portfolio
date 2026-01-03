@@ -179,8 +179,8 @@ const RopeCanvas: React.FC<RopeCanvasProps> = ({ onRopePulled, isShrunk }) => {
             const handlePoint = ropeRef.current.points[ropeRef.current.points.length - 1];
             const handleX = handlePoint.pos.x;
             const handleY = handlePoint.pos.y;
-            const handleWidth = 95;
-            const handleHeight = 60;
+            const handleWidth = 0;
+            const handleHeight = 50;
 
             if (!grabbed.current) {
                 swingAngle.current += 0.007 * swingDirection.current;

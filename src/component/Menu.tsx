@@ -1,20 +1,20 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { IoMdMenu } from "react-icons/io";
 import Header from '../component/header';
-import About from '../component/about';
+import About from '../component/About/about';
 import Achivement from '../component/achivement';
 import Certificate from '../component/certificates';
 import Contact from '../component/contact';
 import BombControls from './BombControls';
-import Skills from '../component/skills';
-import { useBomb } from '../component/BombContext';
+import Skills from '../component/Skills/skills';
+import { useBomb } from '../Context/BombContext';
 import { FaChevronDown } from "react-icons/fa";
 import { TbBomb } from "react-icons/tb";
 import { TbBombFilled } from "react-icons/tb";
 import { RiResetLeftLine } from "react-icons/ri";
 import '../App.css';
 import DayNight from './dayNight';
-import { useTheme } from "../component/ThemeContext";
+import { useTheme } from "../Context/ThemeContext";
 import { MdLightMode } from "react-icons/md";
 import { MdDarkMode } from "react-icons/md";
 class Vector {
@@ -438,7 +438,7 @@ const App: React.FC = () => {
                     // Draw rounded rectangle
                     ctx.beginPath();
                     ctx.roundRect(pos.x - size / 2, pos.y - size / 2, size, size, radius);
-                    ctx.fillStyle = activeTab === item.id ? '#32cacd' : '#32cauh';
+                    ctx.fillStyle = activeTab === item.id ? '#32cacd' : '#32cacd';
                     ctx.fill();
                     // Shadow for 3D look
                     ctx.shadowColor = 'rgba(0, 0, 0, 0.29)';

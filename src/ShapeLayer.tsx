@@ -1,6 +1,6 @@
-import spriteImg from './assets/spritenew2@0.5x.webp';
-import spriteData from './assets/stripenew2@0.5x.json';
-import { useBomb } from './component/BombContext'; // adjust path as needed
+import spriteImg from './assets/spritesheets/spritenew2@0.5x.webp';
+import spriteData from './assets/spritesheets/stripenew2@0.5x.json';
+import { useBomb } from './Context/BombContext'; // adjust path as needed
 
 // If you need useEffect for other purposes in this component, uncomment this line:
 // import { useEffect } from 'react';

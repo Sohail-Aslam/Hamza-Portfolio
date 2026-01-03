@@ -1,9 +1,9 @@
 /* eslint-disable */
 import './App.css'
-import { BombProvider } from './component/BombContext';
+import { BombProvider } from './Context/BombContext';
 import Menu from './component/Menu'
 import ShapeLayer from './ShapeLayer'
-import { ThemeProvider } from './component/ThemeContext';
+import { ThemeProvider } from './Context/ThemeContext';
 import { RopeProvider } from './component/RopeState';
 
 function App() {

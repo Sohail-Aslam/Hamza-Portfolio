@@ -1,5 +1,5 @@
 import React from 'react';
-import { useTheme } from "../component/ThemeContext";
+import { useTheme } from "../Context/ThemeContext";
 
 const DayNight: React.FC = () => {
     const { isDay } = useTheme();
@@ -18,18 +18,18 @@ const DayNight: React.FC = () => {
             <div className={`absolute z-0 inset-0 bg-gradient-to-t transition-all duration-1000 ease-in-out`}></div>
 
             {/* Sun */}
-            <div className={`absolute bottom-30 w-144 h-144 rounded-full bg-yellow-200 shadow-lg ${isDay ? 'shadow-yellow-500/70' : 'shadow-none'}
+            <div className={`absolute bottom-30 w-44 h-44 rounded-full bg-yellow-200 shadow-lg ${isDay ? 'shadow-yellow-500/70' : 'shadow-none'}
                         transition-all duration-1000 ease-in-out z-10 ${sunMoonPosition}`}>
                 <div className={`absolute inset-0 rounded-full blur-xl ${isDay ? 'bg-yellow-300 animate-pulse-slow' : 'bg-transparent'}
                             transition-all duration-1000 ease-in-out`}></div>
             </div>
 
             {/* Moon */}
-            <div className={`absolute w-94 h-94 rounded-full bg-gray-300 shadow-lg ${!isDay ? 'shadow-gray-500/70' : 'shadow-none'}
+            <div className={`absolute w-34 h-34 rounded-full bg-gray-300 shadow-lg ${!isDay ? 'shadow-gray-500/70' : 'shadow-none'}
                         transition-all duration-1000 ease-in-out z-10 ${moonPosition}`}>
-                <div className="absolute w-12 h-12 bg-gray-600 rounded-full top-8 left-18 opacity-70"></div>
-                <div className="absolute w-8 h-8 bg-gray-400 rounded-full top-20 right-14 opacity-70"></div>
-                <div className="absolute w-18 h-16 bg-gray-400 rounded-full bottom-10 left-18 opacity-70"></div>
+                <div className="absolute w-2 h-2 bg-gray-600 rounded-full top-8 left-18 opacity-70"></div>
+                <div className="absolute w-4 h-4 bg-gray-400 rounded-full top-20 right-14 opacity-70"></div>
+                <div className="absolute w-8 h-6 bg-gray-400 rounded-full bottom-10 left-18 opacity-70"></div>
             </div>
 
             {/* Clouds */}

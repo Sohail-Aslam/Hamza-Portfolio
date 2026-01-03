@@ -1,6 +1,13 @@
 /* eslint-disable */
 import { useEffect, useRef } from 'react';
-import { useBomb } from '../component/BombContext'; // adjust path as needed
+import { useBomb } from '../Context/BombContext'; // adjust path as needed
+
+import spaBookingImg from '../assets/Projects/spa-booking.jpg';
+import nesImg from '../assets/Projects/NES.jpg';
+import hbAppImg from '../assets/Projects/HB-app.jpg';
+import spaceXImg from '../assets/Projects/space-x.jpg';
+import washwoodHeathImg from '../assets/Projects/washwoodheath.jpg';
+import pakHealthImg from '../assets/Projects/pakhealth.jpg';
 
 const Achievement = () => {
     const {
@@ -48,12 +55,12 @@ const Achievement = () => {
 
         setHitElementsTransforms(prev => new Map([...prev, ...transformsMap]));
     }, [bombPoint]); // ❗ Note: do NOT depend on bombMode here
-  
-      
+
+
     const projects = [
         {
             name: 'Spa-Booking App',
-            image: 'src/assets/spa-booking.jpg',
+            image: spaBookingImg,
             live: 'https://emhamza.github.io/portfolio/#',
             github: 'https://github.com/emhamza/spa-booking-backend',
             tools: [
@@ -67,7 +74,7 @@ const Achievement = () => {
         },
         {
             name: 'Capstone Project 1',
-            image: 'src/assets/NES.jpg',
+            image: nesImg,
             live: 'https://emhamza.github.io/Capstone-1/index.html',
             github: 'https://github.com/emhamza/Capstone-1',
             tools: [
@@ -81,7 +88,7 @@ const Achievement = () => {
         },
         {
             name: 'House Budget App',
-            image: 'src/assets/HB-app.jpg',
+            image: hbAppImg,
             live: 'https://house-budget-app.onrender.com/',
             github: 'https://github.com/emhamza/house-budget-app',
             tools: [
@@ -93,7 +100,7 @@ const Achievement = () => {
         },
         {
             name: 'Space X Missions',
-            image: 'src/assets/space-x.jpg',
+            image: spaceXImg,
             live: 'https://space-x-jln2.onrender.com/',
             github: 'https://github.com/emhamza/Space-X',
             tools: [
@@ -104,7 +111,7 @@ const Achievement = () => {
         },
         {
             name: 'Washwood Heath PCN',
-            image: 'src/assets/washwoodheath.jpg',
+            image: washwoodHeathImg,
             live: 'https://washwoodheathpcn.co.uk/',
             github: 'https://github.com/emhamza/washwood-heath-pcn',
             tools: [
@@ -116,7 +123,7 @@ const Achievement = () => {
         },
         {
             name: 'Pak Health Centre',
-            image: 'src/assets/pakhealth.jpg',
+            image: pakHealthImg,
             live: 'https://pakhealthcentre.nhs.uk/',
             github: 'https://github.com/emhamza/Pak-Health-Centre',
             tools: [
@@ -179,7 +186,7 @@ const Achievement = () => {
         }
         return { x, y, rot };
     };
-            
+
     return (
         <div id='achivement' className="section-container overflow-hidden p-0 sm:p-5 md:p-10 my-12 min-h-screen flex flex-col justify-center items-center text-center" onClick={calculateHitElements} >
             <div rel="noopener noreferrer"
@@ -265,8 +272,8 @@ const Achievement = () => {
                 </div>
             </div>
         </div>
-      
-      
+
+
     )
 }
 
