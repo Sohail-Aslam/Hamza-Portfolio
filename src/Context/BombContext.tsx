@@ -65,13 +65,91 @@ export const BombProvider = ({ children }: { children: React.ReactNode }) => {
         setBombPoint(null); // Clear bomb point if needed
     };
 
-    // calculateHitElements needs to be defined within the provider or passed as a prop if it's used directly from context
+    const parseTransform = (transformString: string) => {
+        let x = 0, y = 0, rot = 0;
+        const translateMatch = transformString.match(/translate\(([-\d.]+)px,\s*([-\d.]+)px\)/);
+        const rotateMatch = transformString.match(/rotate\(([-\d.]+)deg\)/);
+
+        if (translateMatch) {
+            x = parseFloat(translateMatch[1]);
+            y = parseFloat(translateMatch[2]);
+        }
+        if (rotateMatch) {
+            rot = parseFloat(rotateMatch[1]);
+        }
+        return { x, y, rot };
+    };
+
+    const isElementInViewport = (el: HTMLElement) => {
+        const rect = el.getBoundingClientRect();
+        const buffer = 50;
+        return (
+            rect.top >= -buffer &&
+            rect.left >= -buffer &&
+            rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) + buffer &&
+            rect.right <= (window.innerWidth || document.documentElement.clientWidth) + buffer
+        );
+    };
+
     const calculateHitElements = (e: React.MouseEvent) => {
-        // Your existing calculateHitElements logic goes here.
-        // It's good that it's defined in Header and then called.
-        // If you were to move it here, it would need access to elementRefs directly.
-        // For now, let's assume it's correctly handled in the Header as you have it.
-        console.log("Calculating hit elements (placeholder - defined in Header)");
+        if (!bombMode) return;
+
+        const clickX = e.clientX;
+        const clickY = e.clientY;
+
+        // ✅ Avoid duplicate fire at nearly same spot
+        const minDistance = 30;
+        const alreadyExists = firePoints.some(({ x, y }) => {
+            const dx = x - clickX;
+            const dy = y - clickY;
+            return Math.sqrt(dx * dx + dy * dy) < minDistance;
+        });
+
+        if (alreadyExists) return;
+
+        triggerExplosion(clickX, clickY);
+
+        const newTransforms = new Map<string, string>();
+
+        if (elementRefs.current) {
+            Object.entries(elementRefs.current).forEach(([id, el]) => {
+                if (el && isElementInViewport(el)) {
+                    const elementRect = el.getBoundingClientRect();
+                    const currentElementCenterX = elementRect.left + elementRect.width / 2;
+                    const currentElementCenterY = elementRect.top + elementRect.height / 2;
+
+                    const dx = currentElementCenterX - clickX;
+                    const dy = currentElementCenterY - clickY;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance <= adjustableRadius) {
+                        const forceMultiplier = (adjustableRadius - distance) / adjustableRadius;
+
+                        const normalizedDx = distance === 0 ? 0 : dx / distance;
+                        const normalizedDy = distance === 0 ? 0 : dy / distance;
+
+                        const pushTx = normalizedDx * adjustablePower * forceMultiplier;
+                        const pushTy = normalizedDy * adjustablePower * forceMultiplier;
+
+                        const randomRot = Math.random() * 2 - 1;
+                        const pushRot = randomRot * adjustableRotation;
+
+                        const currentTransformString = hitElementsTransforms.get(id) || 'translate(0px, 0px) rotate(0deg)';
+                        const { x: currentTotalTx, y: currentTotalTy, rot: currentTotalRot } = parseTransform(currentTransformString);
+
+                        const finalTx = currentTotalTx + pushTx;
+                        const finalTy = currentTotalTy + pushTy;
+                        const finalRot = currentTotalRot + pushRot;
+
+                        const finalTransformString = `translate(${finalTx}px, ${finalTy}px) rotate(${finalRot}deg)`;
+                        newTransforms.set(id, finalTransformString);
+                    }
+                }
+            });
+        }
+
+        setBombPoint({ x: clickX, y: clickY });
+        setHitElementsTransforms(prev => new Map([...prev, ...newTransforms]));
     };
 
     return (

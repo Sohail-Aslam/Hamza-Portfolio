@@ -1,11 +1,11 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { FaGithub, FaTwitter, FaCodepen } from "react-icons/fa";
 import { FaLinkedin } from "react-icons/fa6";
 import { IoMdMail } from "react-icons/io";
 import { GoMoveToEnd } from "react-icons/go";
 import { useBomb } from '../Context/BombContext';
 import { useTheme } from '../Context/ThemeContext'; // Adjust path if needed
-import useSound from 'use-sound';
+
 import '../App.css'
 const socialIcons = [
   {
@@ -38,36 +38,12 @@ const socialIcons = [
 // Inline SVG for GoMoveToEnd icon
 const GoMoveToEndSVG = (props: React.SVGProps<SVGSVGElement>) => <GoMoveToEnd {...props} />;
 
-// Helper function to parse transform string
-// Returns { x: number, y: number, rot: number }
-const parseTransform = (transformString: string) => {
-  let x = 0, y = 0, rot = 0;
-  const translateMatch = transformString.match(/translate\(([-\d.]+)px,\s*([-\d.]+)px\)/);
-  const rotateMatch = transformString.match(/rotate\(([-\d.]+)deg\)/);
-
-  if (translateMatch) {
-    x = parseFloat(translateMatch[1]);
-    y = parseFloat(translateMatch[2]);
-  }
-  if (rotateMatch) {
-    rot = parseFloat(rotateMatch[1]);
-  }
-  return { x, y, rot };
-};
-
 const Header = () => {
-  const [playBombSound] = useSound('src/assets/bomb.mp3'); // adjust path as needed
-  const [setBombTriggered] = React.useState(false);
-  const [firePoints, setFirePoints] = useState<{ x: number; y: number; id: string }[]>([]);
-
   const {
     bombMode,
-    adjustablePower,
-    adjustableRadius,
-    adjustableRotation,
-    setBombPoint,
+    calculateHitElements,
+    firePoints,
     hitElementsTransforms,
-    setHitElementsTransforms,
     elementRefs,
   } = useBomb();
   const { isDay } = useTheme();
@@ -79,104 +55,10 @@ const Header = () => {
     }
   }, [isDay]); // Re-run this effect whenever isDay changes
 
-  // Provide default values for variables that might be undefined from useBomb()
   const currentBombMode: boolean = bombMode ?? false;
-  const currentAdjustablePower: number = adjustablePower ?? 450; // Sensible default
-  const currentAdjustableRadius: number = adjustableRadius ?? 150; // Sensible default
-  const currentAdjustableRotation: number = adjustableRotation ?? 0; // Sensible default
 
   const getElementId = (prefix: string, index: number) => `${prefix}-${index}`;
 
-  const isElementInViewport = useCallback((el: HTMLElement) => {
-    const rect = el.getBoundingClientRect();
-    const buffer = 50;
-    return (
-      rect.top >= -buffer &&
-      rect.left >= -buffer &&
-      rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) + buffer &&
-      rect.right <= (window.innerWidth || document.documentElement.clientWidth) + buffer
-    );
-  }, []);
-
-  const calculateHitElements = (e: React.MouseEvent) => {
-    if (!currentBombMode) {
-      console.log("Bomb mode is OFF, no sound will play");
-      return;
-    }
-
-    console.log("Bomb mode ON, attempting to play sound");
-
-    const clickX = e.clientX;
-    const clickY = e.clientY;
-
-    // ✅ Avoid duplicate fire at nearly same spot
-    const minDistance = 30;
-    const alreadyExists = firePoints.some(({ x, y }) => {
-      const dx = x - clickX;
-      const dy = y - clickY;
-      return Math.sqrt(dx * dx + dy * dy) < minDistance;
-    });
-
-    if (!alreadyExists) {
-      const fireId = Date.now().toString();
-      setFirePoints(prev => [...prev, { x: clickX, y: clickY, id: fireId }]);
-
-      // 🕒 Remove after 1 second (duration of fire GIF)
-      setTimeout(() => {
-        setFirePoints(prev => prev.filter(f => f.id !== fireId));
-      }, 600);
-    }
-
-    try {
-      playBombSound(); // Just trigger, no await or .then
-      console.log("Sound trigger function called");
-      setBombTriggered;
-    } catch (error) {
-      console.error("Error while playing sound:", error);
-    }
-
-    const newTransforms = new Map<string, string>();
-
-    if (elementRefs.current) {
-      Object.entries(elementRefs.current).forEach(([id, el]) => {
-        if (el && isElementInViewport(el)) {
-          const elementRect = el.getBoundingClientRect();
-          const currentElementCenterX = elementRect.left + elementRect.width / 2;
-          const currentElementCenterY = elementRect.top + elementRect.height / 2;
-
-          const dx = currentElementCenterX - clickX;
-          const dy = currentElementCenterY - clickY;
-          const distance = Math.sqrt(dx * dx + dy * dy);
-
-          if (distance <= currentAdjustableRadius) {
-            const forceMultiplier = (currentAdjustableRadius - distance) / currentAdjustableRadius;
-
-            const normalizedDx = distance === 0 ? 0 : dx / distance;
-            const normalizedDy = distance === 0 ? 0 : dy / distance;
-
-            const pushTx = normalizedDx * currentAdjustablePower * forceMultiplier;
-            const pushTy = normalizedDy * currentAdjustablePower * forceMultiplier;
-
-            const randomRot = Math.random() * 2 - 1;
-            const pushRot = randomRot * currentAdjustableRotation;
-
-            const currentTransformString = hitElementsTransforms.get(id) || 'translate(0px, 0px) rotate(0deg)';
-            const { x: currentTotalTx, y: currentTotalTy, rot: currentTotalRot } = parseTransform(currentTransformString);
-
-            const finalTx = currentTotalTx + pushTx;
-            const finalTy = currentTotalTy + pushTy;
-            const finalRot = currentTotalRot + pushRot;
-
-            const finalTransformString = `translate(${finalTx}px, ${finalTy}px) rotate(${finalRot}deg)`;
-            newTransforms.set(id, finalTransformString);
-          }
-        }
-      });
-    }
-
-    setBombPoint({ x: clickX, y: clickY });
-    setHitElementsTransforms(prev => new Map([...prev, ...newTransforms]));
-  };
 
 
   return (
